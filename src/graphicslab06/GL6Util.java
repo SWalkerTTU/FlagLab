@@ -28,23 +28,25 @@ public class GL6Util {
     private static final Area star = buildStar();
     private static int width;
 
-    public static Area buildStar() {
+    private static Area buildStar() {
         final double ratio = (3 - Math.sqrt(5)) / 2;
         double angle = 2 * Math.PI / 5;
         Area starArea = new Area();
-        
+
         Path2D.Double tri = new Path2D.Double();
         tri.moveTo(Math.cos(Math.PI / 2), Math.sin(-Math.PI / 2));
-        tri.lineTo(Math.cos(Math.PI / 10) * ratio, Math.sin(Math.PI / 10) * ratio);
-        tri.lineTo(-Math.cos(Math.PI / 10) * ratio, Math.sin(Math.PI / 10) * ratio);
+        tri.lineTo(Math.cos(Math.PI / 10) * ratio,
+                Math.sin(Math.PI / 10) * ratio);
+        tri.lineTo(-Math.cos(Math.PI / 10) * ratio,
+                Math.sin(Math.PI / 10) * ratio);
         tri.closePath();
-            
-        IntStream.range(0, 5).mapToObj((int i) -> 
-                AffineTransform.getRotateInstance(i * angle))
+
+        IntStream.range(0, 5).mapToObj((int i)
+                -> AffineTransform.getRotateInstance(i * angle))
                 .map((AffineTransform at) -> at.createTransformedShape(tri))
                 .forEach((Shape s) -> starArea.add(new Area(s)));
-                
-        return starArea;                
+
+        return starArea;
     }
 
     public static void delay(int ms) {
@@ -215,7 +217,8 @@ public class GL6Util {
         myCanvas.setColor(gold);
         myCanvas.fill(drawPath);
         myCanvas.setColor(blue);
-        myCanvas.fill(new Ellipse2D.Float(getWidth() / 2.0F - 3.5F * flagUnit, height / 2.0F - 3.5F * flagUnit, 7 * flagUnit, 7 * flagUnit));
+        myCanvas.fill(new Ellipse2D.Float(getWidth() / 2.0F - 3.5F * flagUnit,
+                height / 2.0F - 3.5F * flagUnit, 7 * flagUnit, 7 * flagUnit));
         return myImage;
     }
 
@@ -244,7 +247,8 @@ public class GL6Util {
         myCanvas.setColor(Color.white);
         myCanvas.fillRect(0, 0, width, height);
         myCanvas.setColor(new Color(16711705));
-        myCanvas.fill(new Ellipse2D.Float(getWidth() / 2 - 0.3F * height, 0.2F * height, 0.6F * height, 0.6F * height));
+        myCanvas.fill(new Ellipse2D.Float(getWidth() / 2 - 0.3F * height,
+                0.2F * height, 0.6F * height, 0.6F * height));
         return myImage;
     }
 
@@ -255,17 +259,25 @@ public class GL6Util {
         double hMargin = (2 * width - 3 * height) / 4.0;
         double gridUnit = height / 20.0;
         Point2D.Double bigCenter = new Point2D.Double(getHeight() / 4.0 + hMargin, height / 4.0);
-        AffineTransform scale = new AffineTransform(3 * gridUnit, 0, 0, 3 * gridUnit, bigCenter.x, bigCenter.y);
+        AffineTransform scale
+                = new AffineTransform(3 * gridUnit, 0, 0, 3 * gridUnit, bigCenter.x, bigCenter.y);
         myCanvas.setColor(Color.yellow);
         myCanvas.fill(scale.createTransformedShape(star));
-        Point2D.Double[] littleCtrs = new Point2D.Double[]{new Point2D.Double(10 * gridUnit + hMargin, 2 * gridUnit), new Point2D.Double(12 * gridUnit + hMargin, 4 * gridUnit), new Point2D.Double(12 * gridUnit + hMargin, 7 * gridUnit), new Point2D.Double(10 * gridUnit + hMargin, 9 * gridUnit)};
-        for (int i = 0; i < 4; i++) {
-            Point2D.Double center = littleCtrs[i];
-            scale.setTransform(gridUnit, 0, 0, gridUnit, center.x, center.y);
-            double theta = Math.atan2(bigCenter.x - center.x, center.y - bigCenter.y);
-            scale.rotate(theta);
-            myCanvas.fill(scale.createTransformedShape(star));
-        }
+        double[] littleCtrXs = new double[]{10, 12, 12, 10};
+        double[] littleCtrYs = new double[]{2, 4, 7, 9};
+        IntStream.range(0, littleCtrXs.length)
+                .mapToObj((int i)
+                        -> new Point2D.Double(
+                                littleCtrXs[i] * gridUnit + hMargin,
+                                littleCtrYs[i] * gridUnit))
+                .map((Point2D.Double p2d) -> {
+                    scale.setTransform(gridUnit, 0, 0, gridUnit, p2d.x, p2d.y);
+                    double theta = Math.atan2(bigCenter.x - p2d.x,
+                            p2d.y - bigCenter.y);
+                    scale.rotate(theta);
+                    return scale.createTransformedShape(star);
+                })
+                .forEach(myCanvas::fill);
         myCanvas.setColor(Color.black);
         myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, height));
         myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, height));
@@ -568,7 +580,8 @@ public class GL6Util {
                 });
         BufferedImage myImage = drawBars(stripes, false);
         Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
         final float starDiam = 2 * height / 65.0F;
         final float starHSpace = width / 30.0F;
         final float starVSpace = 7 * height / 130.0F;
