@@ -25,31 +25,26 @@ import javax.swing.JOptionPane;
 public class GL6Util {
 
     private static int height;
-    private static final Path2D.Float star = buildStar();
+    private static final Area star = buildStar();
     private static int width;
 
-    public static Path2D.Float buildStar() {
-//        final double phi = (1 + Math.sqrt(5)) / 2;
-//        final double ratio = 1 - (1 / phi);
+    public static Area buildStar() {
         final double ratio = (3 - Math.sqrt(5)) / 2;
-        Path2D.Float path = new Path2D.Float();
-        double angle, h, v;
-        for (int i = 0; i < 5; i++) {
-            angle = Math.PI / 10 * (5 - 4 * i);
-            h = Math.cos(angle);
-            v = Math.sin(angle);
-            if (i == 0) {
-                path.moveTo(h, -v);
-            } else {
-                path.lineTo(h, -v);
-            }
-            angle = Math.PI / 10 * (3 - 4 * i);
-            h = ratio * Math.cos(angle);
-            v = ratio * Math.sin(angle);
-            path.lineTo(h, -v);
-        }
-        path.closePath();
-        return path;
+        double angle = 2 * Math.PI / 5;
+        Area starArea = new Area();
+        
+        Path2D.Double tri = new Path2D.Double();
+        tri.moveTo(Math.cos(Math.PI / 2), Math.sin(-Math.PI / 2));
+        tri.lineTo(Math.cos(Math.PI / 10) * ratio, Math.sin(Math.PI / 10) * ratio);
+        tri.lineTo(-Math.cos(Math.PI / 10) * ratio, Math.sin(Math.PI / 10) * ratio);
+        tri.closePath();
+            
+        IntStream.range(0, 5).mapToObj((int i) -> 
+                AffineTransform.getRotateInstance(i * angle))
+                .map((AffineTransform at) -> at.createTransformedShape(tri))
+                .forEach((Shape s) -> starArea.add(new Area(s)));
+                
+        return starArea;                
     }
 
     public static void delay(int ms) {
@@ -262,14 +257,14 @@ public class GL6Util {
         Point2D.Double bigCenter = new Point2D.Double(getHeight() / 4.0 + hMargin, height / 4.0);
         AffineTransform scale = new AffineTransform(3 * gridUnit, 0, 0, 3 * gridUnit, bigCenter.x, bigCenter.y);
         myCanvas.setColor(Color.yellow);
-        myCanvas.fill(star.createTransformedShape(scale));
+        myCanvas.fill(scale.createTransformedShape(star));
         Point2D.Double[] littleCtrs = new Point2D.Double[]{new Point2D.Double(10 * gridUnit + hMargin, 2 * gridUnit), new Point2D.Double(12 * gridUnit + hMargin, 4 * gridUnit), new Point2D.Double(12 * gridUnit + hMargin, 7 * gridUnit), new Point2D.Double(10 * gridUnit + hMargin, 9 * gridUnit)};
         for (int i = 0; i < 4; i++) {
             Point2D.Double center = littleCtrs[i];
             scale.setTransform(gridUnit, 0, 0, gridUnit, center.x, center.y);
             double theta = Math.atan2(bigCenter.x - center.x, center.y - bigCenter.y);
             scale.rotate(theta);
-            myCanvas.fill(star.createTransformedShape(scale));
+            myCanvas.fill(scale.createTransformedShape(star));
         }
         myCanvas.setColor(Color.black);
         myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, height));
@@ -301,7 +296,7 @@ public class GL6Util {
         Point2D.Double ctr3 = new Point2D.Double(hMargin + fieldWidth - 0.55 * height * 9 / Math.sqrt(145), 0.55 * height * 8 / Math.sqrt(145));
         AffineTransform starLoc = new AffineTransform(0.1 * height, 0, 0, 0.1 * height, ctr3.x, ctr3.y);
         starLoc.rotate(Math.atan2(hMargin + fieldWidth - ctr3.x, ctr3.y));
-        myCanvas.fill(star.createTransformedShape(starLoc));
+        myCanvas.fill(starLoc.createTransformedShape(star));
         myCanvas.setColor(Color.black);
         myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, height));
         myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, height));
@@ -469,7 +464,7 @@ public class GL6Util {
         Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, height);
         Area shield = new Area(new Ellipse2D.Double(-outRadius, -outRadius, 2 * outRadius, 2 * outRadius));
         shield.subtract(new Area(new Ellipse2D.Double(-inRadius, -inRadius, 2 * inRadius, 2 * inRadius)));
-        shield.add(new Area(star.createTransformedShape(new AffineTransform(inRadius, 0, 0, inRadius, 0, 0))));
+        shield.add(new Area(AffineTransform.getScaleInstance(inRadius, inRadius).createTransformedShape(star)));
         myCanvas.setColor(new Color(224, 224, 224));
         myCanvas.fill(shield.createTransformedArea(new AffineTransform(1, 0, 0, 1, width / 2.0, height / 2.0)));
         myCanvas.setColor(Color.black);
@@ -492,7 +487,7 @@ public class GL6Util {
         AffineTransform txStar
                 = new AffineTransform(getWidth() / 8.0, 0.0, 0.0,
                         getWidth() / 8.0, getWidth() / 6.0, getHeight() / 2.0);
-        myCanvas.fill(star.createTransformedShape(txStar));
+        myCanvas.fill(txStar.createTransformedShape(star));
         return myImage;
     }
 
@@ -586,7 +581,7 @@ public class GL6Util {
                 .mapToObj(i -> new AffineTransform(starDiam, 0, 0, starDiam,
                                 (i % 11 + 1) * starHSpace,
                                 (i / 11 + 1) * starVSpace))
-                .map(star::createTransformedShape)
+                .map((AffineTransform at) -> at.createTransformedShape(star))
                 .forEach(myCanvas::fill);
         return myImage;
     }
@@ -595,9 +590,9 @@ public class GL6Util {
         BufferedImage myImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
         return myImage;
     }
-    
-    protected static void niceShot(BufferedImage img){
-        
+
+    protected static void niceShot(BufferedImage img) {
+
     }
 
     protected static BufferedImage nordicCross(Color[] colors) {
