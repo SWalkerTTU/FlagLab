@@ -510,9 +510,8 @@ public class GL6Util {
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         double jackUnit = width / 60.0;
-        double slope = -0.5;
-        double angle = Math.atan(slope);
-        double centerX = 30 * jackUnit;
+        double angle = Math.atan(-0.5);
+        double centerX = getWidth() / 2.0;
         double centerY = getHeight() / 2.0;
         
         AffineTransform nesw = AffineTransform.getRotateInstance(angle,
@@ -527,8 +526,8 @@ public class GL6Util {
         Area stripe = new Area(new Rectangle2D.Double(centerX - 35 * jackUnit,
                 centerY - 3 * jackUnit, 70 * jackUnit, 6 * jackUnit));
         
-        Area saltire = new Area(nesw.createTransformedShape(stripe));
-        saltire.add(new Area(stripe.createTransformedArea(nwse)));
+        Area saltire = stripe.createTransformedArea(nesw);
+        saltire.add(stripe.createTransformedArea(nwse));
         
         Area redStripe = new Area(new Rectangle2D.Double(centerX,
                 centerY - 2 * jackUnit, 35 * jackUnit, 2 * jackUnit));
