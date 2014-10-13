@@ -24,7 +24,7 @@ public class FlagTest extends Applet {
         Flag f = null;
         try {
 //            f = new UniqueFlag("China","flagOfPRC");
-            f = new UniqueFlag("Great Britain", "flagOfUK");
+            f = new UniqueFlag("Texas", "flagOfTexas");
         } catch (NoSuchMethodException ex) {
             Logger.getLogger(FlagTest.class.getName()).log(Level.SEVERE, null, ex);
         }

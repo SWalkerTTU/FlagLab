@@ -494,12 +494,13 @@ public class GL6Util {
         Graphics2D myCanvas = myImage.createGraphics();
         BufferedImage overlay = drawBars(new Color[]{blue, blank, blank}, true);
         myCanvas.drawImage(overlay, null, 0, 0);
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
         myCanvas.setColor(Color.white);
         AffineTransform txStar
                 = new AffineTransform(getWidth() / 8.0, 0.0, 0.0,
                         getWidth() / 8.0, getWidth() / 6.0, getHeight() / 2.0);
-        myCanvas.fill(txStar.createTransformedShape(star));
+        myCanvas.fill(star.createTransformedArea(txStar));
         return myImage;
     }
 
@@ -508,7 +509,8 @@ public class GL6Util {
         Color blue = new Color(11135);
         BufferedImage myImage = drawBars(new Color[]{blue}, false);
         Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
         double jackUnit = width / 60.0;
         double angle = Math.atan(-0.5);
         double centerX = getWidth() / 2.0;
@@ -585,7 +587,8 @@ public class GL6Util {
         final float starHSpace = width / 30.0F;
         final float starVSpace = 7 * height / 130.0F;
         myCanvas.setColor(blue);
-        myCanvas.fill(new Rectangle2D.Float(0, 0, 0.4F * width, 7.0F * height / 13));
+        myCanvas.fill(new Rectangle2D.Float(0, 0, 0.4F * width,
+                7.0F * height / 13));
         myCanvas.setColor(Color.white);
         IntStream.range(0, 99)
                 .filter(i -> i % 2 == 0)
@@ -599,7 +602,8 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfUSSR() {
-        BufferedImage myImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage myImage = new BufferedImage(getWidth(), height,
+                BufferedImage.TYPE_INT_RGB);
         return myImage;
     }
 
@@ -608,7 +612,8 @@ public class GL6Util {
     }
 
     protected static BufferedImage nordicCross(Color[] colors) {
-        final BufferedImage myImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
+        final BufferedImage myImage = new BufferedImage(getWidth(), height,
+                BufferedImage.TYPE_INT_RGB);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         myCanvas.setColor(colors[0]);
