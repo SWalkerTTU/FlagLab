@@ -506,60 +506,60 @@ public class GL6Util {
     protected static BufferedImage flagOfUK() {
         Color red = new Color(13504806);
         Color blue = new Color(11135);
-        float jackUnit = width / 60.0F;
-        Point2D.Float topLeft = new Point2D.Float(0, height / 2 - 15 * jackUnit);
         BufferedImage myImage = drawBars(new Color[]{blue}, false);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        double slope = 0.5;
-        double vFactor = Math.sqrt(1 + slope * slope);
-        double hFactor = vFactor / slope;
-        double jackH = jackUnit * hFactor;
-        double jackV = jackUnit * vFactor;
-        Path2D.Float whitePath = new Path2D.Float();
-        whitePath.moveTo(0, 0);
-        whitePath.lineTo(0, -3 * jackV);
-        whitePath.lineTo(-getWidth() / 2.0, -3 * jackV - height / 2.0 + topLeft.y);
-        whitePath.lineTo(-getWidth() / 2.0, -getHeight() / 2.0 + topLeft.y);
-        whitePath.lineTo(-getWidth() / 2.0 - 3 * jackH, -getHeight() / 2.0 + topLeft.y);
-        whitePath.lineTo(-3 * jackH, 0);
-        whitePath.closePath();
-        Path2D.Float redPath = new Path2D.Float();
-        redPath.moveTo(0, 0);
-        redPath.lineTo(-getWidth() / 2.0, -getHeight() / 2.0 + topLeft.y);
-        redPath.lineTo(-getWidth() / 2.0 - 2 * jackH, -getHeight() / 2.0 + topLeft.y);
-        redPath.lineTo(-2 * jackH, 0);
-        redPath.closePath();
-        AffineTransform shift = new AffineTransform(1, 0, 0, 1, width / 2.0, height / 2.0);
-        double theta1 = -2 * Math.atan(slope);
-        for (int i = 0; i < 4; i++) {
-            double rot;
-            switch (i) {
-                case 1:
-                case 3:
-                    rot = theta1;
-                    break;
-                case 2:
-                    rot = Math.PI - theta1;
-                    break;
-                default:
-                    rot = 0;
-            }
-            shift.rotate(rot);
-            myCanvas.setColor(Color.white);
-            myCanvas.fill(whitePath.createTransformedShape(shift));
-            myCanvas.setColor(red);
-            myCanvas.fill(redPath.createTransformedShape(shift));
-        }
+        double jackUnit = width / 60.0;
+        double slope = -0.5;
+        double angle = Math.atan(slope);
+        double centerX = 30 * jackUnit;
+        double centerY = getHeight() / 2.0;
+        
+        AffineTransform nesw = AffineTransform.getRotateInstance(angle,
+                centerX, centerY);
+        AffineTransform nwse = AffineTransform.getRotateInstance(-angle,
+                centerX, centerY);
+        AffineTransform ns = AffineTransform
+                .getQuadrantRotateInstance(1, centerX, centerY);
+        AffineTransform ew = AffineTransform
+                .getQuadrantRotateInstance(2, centerX, centerY);
+        
+        Area stripe = new Area(new Rectangle2D.Double(centerX - 35 * jackUnit,
+                centerY - 3 * jackUnit, 70 * jackUnit, 6 * jackUnit));
+        
+        Area saltire = new Area(nesw.createTransformedShape(stripe));
+        saltire.add(new Area(stripe.createTransformedArea(nwse)));
+        
+        Area redStripe = new Area(new Rectangle2D.Double(centerX,
+                centerY - 2 * jackUnit, 35 * jackUnit, 2 * jackUnit));
+        redStripe.add(redStripe.createTransformedArea(ew));
+
+        Area redSaltire = redStripe.createTransformedArea(nesw);
+        redSaltire.add(redStripe.createTransformedArea(nwse));
+
+        Area bigStripe = new Area(
+                new Rectangle2D.Double(centerX - 35 * jackUnit,
+                        centerY - 5 * jackUnit, 70 * jackUnit, 10 * jackUnit));
+        bigStripe.add(bigStripe.createTransformedArea(ns));
+        
+        Area redCross = new Area();
+        redCross.add(stripe);
+        redCross.add(stripe.createTransformedArea(ns));
+        
+        Area blackout = new Area(new Rectangle2D.Double(0,
+                getHeight() / 2.0 + 15 * jackUnit, width, 5 * jackUnit));
+        blackout.add(blackout.createTransformedArea(ew));
+        
         myCanvas.setColor(Color.white);
-        myCanvas.fill(new Rectangle2D.Float(getWidth() / 2 - 5 * jackUnit, topLeft.y, 10 * jackUnit, width / 2));
-        myCanvas.fill(new Rectangle2D.Float(0, height / 2 - 5 * jackUnit, width, 10 * jackUnit));
+        myCanvas.fill(saltire);
         myCanvas.setColor(red);
-        myCanvas.fill(new Rectangle2D.Float(getWidth() / 2 - 3 * jackUnit, topLeft.y, 6 * jackUnit, width / 2));
-        myCanvas.fill(new Rectangle2D.Float(0, height / 2 - 3 * jackUnit, width, 6 * jackUnit));
+        myCanvas.fill(redSaltire);
+        myCanvas.setColor(Color.white);
+        myCanvas.fill(bigStripe);
+        myCanvas.setColor(red);
+        myCanvas.fill(redCross);
         myCanvas.setColor(Color.black);
-        myCanvas.fill(new Rectangle2D.Float(0, 0, width, topLeft.y));
-        myCanvas.fill(new Rectangle2D.Float(0, height / 2 + 15 * jackUnit, width, topLeft.y));
+        myCanvas.fill(blackout);
         return myImage;
     }
 

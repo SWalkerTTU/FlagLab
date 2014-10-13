@@ -23,7 +23,8 @@ public class FlagTest extends Applet {
 
         Flag f = null;
         try {
-            f = new UniqueFlag("China","flagOfPRC");
+//            f = new UniqueFlag("China","flagOfPRC");
+            f = new UniqueFlag("Great Britain", "flagOfUK");
         } catch (NoSuchMethodException ex) {
             Logger.getLogger(FlagTest.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -32,7 +33,7 @@ public class FlagTest extends Applet {
         g.drawImage(f.getImage(), 0, 0, this);
         
 //        f.displayFlag(g, 1);
-        GL6Util.delay(10000);
+        GL6Util.delay(5000);
         System.exit(0);
     }
 
