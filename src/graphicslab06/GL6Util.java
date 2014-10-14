@@ -14,6 +14,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.stream.IntStream;
 import javax.swing.JOptionPane;
@@ -162,13 +163,13 @@ public class GL6Util {
     }
 
     protected static BufferedImage drawBars(Color[] colors, boolean isVertical) {
-        final BufferedImage myImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D myCanvas = myImage.createGraphics();
 
         double rectWidth = (isVertical)
-                ? width / (double) colors.length : width;
+                ? getWidth() / (double) colors.length : getWidth();
         double rectHeight = (isVertical)
-                ? height : height / (double) colors.length;
+                ? getHeight() : getHeight() / (double) colors.length;
 
         IntStream.range(0, colors.length)
                 .mapToObj(i -> new ColorRect(
@@ -195,7 +196,7 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfBrazil() {
-        BufferedImage myImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Color green = new Color(43097);
@@ -205,20 +206,20 @@ public class GL6Util {
         Point2D.Float topLeft = new Point2D.Float(50, 10);
         float flagUnit = 45.0F;
         myCanvas.setColor(Color.black);
-        myCanvas.fillRect(0, 0, width, height);
+        myCanvas.fillRect(0, 0, getWidth(), getHeight());
         myCanvas.setColor(green);
         myCanvas.fill(new Rectangle2D.Float(topLeft.x, topLeft.y, 20 * flagUnit, 14 * flagUnit));
         Path2D.Float drawPath = new Path2D.Float();
-        drawPath.moveTo(getWidth() / 2.0F, height / 2.0 - 5.3 * flagUnit);
-        drawPath.lineTo(getWidth() / 2.0F - 8.3 * flagUnit, height / 2.0);
-        drawPath.lineTo(getWidth() / 2.0F, height / 2.0 + 5.3 * flagUnit);
-        drawPath.lineTo(getWidth() / 2.0F + 8.3 * flagUnit, height / 2.0);
+        drawPath.moveTo(getWidth() / 2.0F, getHeight() / 2.0 - 5.3 * flagUnit);
+        drawPath.lineTo(getWidth() / 2.0F - 8.3 * flagUnit, getHeight() / 2.0);
+        drawPath.lineTo(getWidth() / 2.0F, getHeight() / 2.0 + 5.3 * flagUnit);
+        drawPath.lineTo(getWidth() / 2.0F + 8.3 * flagUnit, getHeight() / 2.0);
         drawPath.closePath();
         myCanvas.setColor(gold);
         myCanvas.fill(drawPath);
         myCanvas.setColor(blue);
         myCanvas.fill(new Ellipse2D.Float(getWidth() / 2.0F - 3.5F * flagUnit,
-                height / 2.0F - 3.5F * flagUnit, 7 * flagUnit, 7 * flagUnit));
+                getHeight() / 2.0F - 3.5F * flagUnit, 7 * flagUnit, 7 * flagUnit));
         return myImage;
     }
 
@@ -241,14 +242,14 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfJapan() {
-        BufferedImage myImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         myCanvas.setColor(Color.white);
-        myCanvas.fillRect(0, 0, width, height);
+        myCanvas.fillRect(0, 0, getWidth(), getHeight());
         myCanvas.setColor(new Color(16711705));
-        myCanvas.fill(new Ellipse2D.Float(getWidth() / 2 - 0.3F * height,
-                0.2F * height, 0.6F * height, 0.6F * height));
+        myCanvas.fill(new Ellipse2D.Float(getWidth() / 2 - 0.3F * getHeight(),
+                0.2F * getHeight(), 0.6F * getHeight(), 0.6F * getHeight()));
         return myImage;
     }
 
@@ -256,9 +257,9 @@ public class GL6Util {
         BufferedImage myImage = drawBars(new Color[]{Color.red}, false);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        double hMargin = (2 * width - 3 * height) / 4.0;
-        double gridUnit = height / 20.0;
-        Point2D.Double bigCenter = new Point2D.Double(getHeight() / 4.0 + hMargin, height / 4.0);
+        double hMargin = (2 * getWidth() - 3 * getHeight()) / 4.0;
+        double gridUnit = getHeight() / 20.0;
+        Point2D.Double bigCenter = new Point2D.Double(getHeight() / 4.0 + hMargin, getHeight() / 4.0);
         AffineTransform scale
                 = new AffineTransform(3 * gridUnit, 0, 0, 3 * gridUnit, bigCenter.x, bigCenter.y);
         myCanvas.setColor(Color.yellow);
@@ -279,55 +280,55 @@ public class GL6Util {
                 })
                 .forEach(myCanvas::fill);
         myCanvas.setColor(Color.black);
-        myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, height));
-        myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, height));
+        myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, getHeight()));
+        myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, getHeight()));
         return myImage;
     }
 
     protected static BufferedImage flagOfPakistan() {
         Color green = new Color(26112);
-        BufferedImage myImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        double hMargin = (2 * width - 3 * height) / 4.0;
-        double fieldWidth = width - 2 * hMargin;
+        double hMargin = (2 * getWidth() - 3 * getHeight()) / 4.0;
+        double fieldWidth = getWidth() - 2 * hMargin;
         Point2D.Double topLeft = new Point2D.Double(hMargin, 0);
-        Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, height);
-        Point2D.Double ctr1 = new Point2D.Double(hMargin + fieldWidth * 5 / 8, height / 2.0);
-        double rad1 = 0.3 * height;
-        double c2locRad = 0.65 * height;
+        Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, getHeight());
+        Point2D.Double ctr1 = new Point2D.Double(hMargin + fieldWidth * 5 / 8, getHeight() / 2.0);
+        double rad1 = 0.3 * getHeight();
+        double c2locRad = 0.65 * getHeight();
         Point2D.Double ctr2 = new Point2D.Double(hMargin + fieldWidth - c2locRad * 9 / Math.sqrt(145), c2locRad * 8 / Math.sqrt(145));
-        double rad2 = 0.275 * height;
+        double rad2 = 0.275 * getHeight();
         myCanvas.setColor(green);
-        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth, height));
+        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth, getHeight()));
         myCanvas.setColor(Color.white);
-        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth / 4.0, height));
+        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth / 4.0, getHeight()));
         Area crescent = new Area(new Ellipse2D.Double(ctr1.x - rad1, ctr1.y - rad1, 2 * rad1, 2 * rad1));
         crescent.subtract(new Area(new Ellipse2D.Double(ctr2.x - rad2, ctr2.y - rad2, 2 * rad2, 2 * rad2)));
         myCanvas.fill(crescent);
-        Point2D.Double ctr3 = new Point2D.Double(hMargin + fieldWidth - 0.55 * height * 9 / Math.sqrt(145), 0.55 * height * 8 / Math.sqrt(145));
-        AffineTransform starLoc = new AffineTransform(0.1 * height, 0, 0, 0.1 * height, ctr3.x, ctr3.y);
+        Point2D.Double ctr3 = new Point2D.Double(hMargin + fieldWidth - 0.55 * getHeight() * 9 / Math.sqrt(145), 0.55 * getHeight() * 8 / Math.sqrt(145));
+        AffineTransform starLoc = new AffineTransform(0.1 * getHeight(), 0, 0, 0.1 * getHeight(), ctr3.x, ctr3.y);
         starLoc.rotate(Math.atan2(hMargin + fieldWidth - ctr3.x, ctr3.y));
         myCanvas.fill(starLoc.createTransformedShape(star));
         myCanvas.setColor(Color.black);
-        myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, height));
-        myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, height));
+        myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, getHeight()));
+        myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, getHeight()));
         return myImage;
     }
 
     protected static BufferedImage flagOfROK() {
         double slope = 2.0 / 3.0;
-        double flagWidth = 3 * height / 2.0;
-        double flagUnit = height / 2.0;
+        double flagWidth = 3 * getHeight() / 2.0;
+        double flagUnit = getHeight() / 2.0;
         Point2D.Double topLeft = new Point2D.Double(getWidth() / 2.0 - flagWidth / 2.0, 0);
-        Point2D.Double bottomRight = new Point2D.Double(getWidth() / 2.0 + flagWidth / 2.0, height);
+        Point2D.Double bottomRight = new Point2D.Double(getWidth() / 2.0 + flagWidth / 2.0, getHeight());
         BufferedImage myImage = drawBars(new Color[]{Color.white}, false);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         Color red = new Color(12979248);
         Color blue = new Color(13432);
         double angle = Math.atan(slope);
-        AffineTransform shift = new AffineTransform(1, 0, 0, 1, width / 2.0, height / 2.0);
+        AffineTransform shift = new AffineTransform(1, 0, 0, 1, getWidth() / 2.0, getHeight() / 2.0);
         AffineTransform yflip = new AffineTransform(-1, 0, 0, 1, 0, 0);
         AffineTransform xflip = new AffineTransform(1, 0, 0, -1, 0, 0);
         Area tao = new Area(new Ellipse2D.Double(-flagUnit / 2, -flagUnit / 2, flagUnit, flagUnit));
@@ -360,7 +361,7 @@ public class GL6Util {
         tgRemovers[1].add(new Area(new Rectangle2D.Double(tgXOffset + tgBarWidth + tgRemWidth, tgDivOff, tgBarWidth, tgRemWidth)));
         tgRemovers[3].add(new Area(new Rectangle2D.Double(tgXOffset, tgDivOff, tgWidth, tgRemWidth)));
         tgRemovers[3].subtract(new Area(new Rectangle2D.Double(tgXOffset + tgBarWidth + tgRemWidth, tgDivOff, tgBarWidth, tgRemWidth)));
-        shift.setTransform(1, 0, 0, 1, width / 2.0, height / 2.0);
+        shift.setTransform(1, 0, 0, 1, getWidth() / 2.0, getHeight() / 2.0);
         myCanvas.setColor(Color.BLACK);
         for (int i = 0; i < 4; i++) {
             Area drawGram = new Area(trigramBase);
@@ -381,8 +382,8 @@ public class GL6Util {
             myCanvas.fill(drawGram.createTransformedArea(shift));
         }
         myCanvas.setColor(Color.black);
-        myCanvas.fill(new Rectangle2D.Double(0, 0, topLeft.x, height));
-        myCanvas.fill(new Rectangle2D.Double(bottomRight.x, 0, width - bottomRight.x, height));
+        myCanvas.fill(new Rectangle2D.Double(0, 0, topLeft.x, getHeight()));
+        myCanvas.fill(new Rectangle2D.Double(bottomRight.x, 0, getWidth() - bottomRight.x, getHeight()));
         return myImage;
     }
 
@@ -391,98 +392,127 @@ public class GL6Util {
         Color red = new Color(14826792);
         Color blue = new Color(793740);
         Color gold = new Color(16561428);
-        double barWidth = height / 30.0;
-        double slope = height / (double) width;
-        double cosFact = Math.sqrt(slope * slope + 1);
-        double barHzn = Math.ceil(barWidth * cosFact / slope);
-        double semComSlp = -slope / (1 + cosFact);
-        double hStep = -semComSlp * barWidth;
-        BufferedImage myImage = drawBars(new Color[]{green}, false);
+        BufferedImage myImage = drawBars(new Color[]{red, blue}, false);
         Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        AffineTransform shift = new AffineTransform();
-        Path2D.Double drawPath = new Path2D.Double();
-        drawPath.moveTo(0, 0);
-        drawPath.lineTo(getWidth() / 2.0, height / 2.0);
-        drawPath.lineTo(getWidth(), height / 2.0);
-        drawPath.lineTo(getWidth(), 0);
-        drawPath.closePath();
-        shift.setTransform(1, 0, 0, 1, 3 * hStep, -3 * barWidth);
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        double angle = Math.atan2(getHeight(), getWidth());
+        double centerX = getWidth() / 2.0;
+        double centerY = getHeight() / 2.0;
+
+        AffineTransform nw = AffineTransform
+                .getRotateInstance(Math.PI + angle, centerX, centerY);
+        AffineTransform sw = AffineTransform
+                .getRotateInstance(Math.PI - angle, centerX, centerY);
+
+        Area whiteBar = new Area(new Rectangle2D.Double(centerX,
+                centerY - getHeight() / 6.0, 0.6 * getWidth(),
+                getHeight() / 3.0));
+        Area whiteFimbre = new Area(whiteBar);
+        whiteFimbre.add(whiteBar.createTransformedArea(nw));
+        whiteFimbre.add(whiteBar.createTransformedArea(sw));
+
+        Area greenBar = new Area(new Rectangle2D.Double(centerX,
+                centerY - getHeight() / 10.0, 0.6 * getWidth(),
+                getHeight() / 5.0));
+        Area greenFimbre = new Area(greenBar);
+        greenFimbre.add(greenBar.createTransformedArea(nw));
+        greenFimbre.add(greenBar.createTransformedArea(sw));
+
+        Area goldTri = new Area(new Rectangle2D.Double(0, 0, getWidth(),
+                getHeight()));
+        goldTri.subtract(greenFimbre);
+        Path2D.Double bigTri = new Path2D.Double();
+        bigTri.moveTo(0, 0);
+        bigTri.lineTo(centerX, centerY);
+        bigTri.lineTo(0, getHeight());
+        bigTri.closePath();
+        goldTri.intersect(new Area(bigTri));
+
+        Area blackTri = new Area(goldTri);
+        blackTri.subtract(whiteFimbre);
+
         myCanvas.setColor(Color.white);
-        myCanvas.fill(drawPath.createTransformedShape(shift));
-        shift.setTransform(1, 0, 0, -1, 3 * hStep, height + 3 * barWidth);
-        myCanvas.fill(drawPath.createTransformedShape(shift));
-        shift.setTransform(1, 0, 0, 1, 5 * hStep, -5 * barWidth);
-        myCanvas.setColor(red);
-        myCanvas.fill(drawPath.createTransformedShape(shift));
-        shift.setTransform(1, 0, 0, -1, 5 * hStep, height + 5 * barWidth);
-        myCanvas.setColor(blue);
-        myCanvas.fill(drawPath.createTransformedShape(shift));
-        drawPath.reset();
-        drawPath.moveTo(0, 0);
-        drawPath.lineTo(getWidth() / 2.0, height / 2.0);
-        drawPath.lineTo(0, height);
-        shift.setTransform(1, 0, 0, 1, -3 * barHzn, 0);
+        myCanvas.fill(whiteFimbre);
+        myCanvas.setColor(green);
+        myCanvas.fill(greenFimbre);
         myCanvas.setColor(gold);
-        myCanvas.fill(drawPath.createTransformedShape(shift));
-        shift.setTransform(1, 0, 0, 1, -5 * barHzn, 0);
-        myCanvas.setColor(Color.BLACK);
-        myCanvas.fill(drawPath.createTransformedShape(shift));
+        myCanvas.fill(goldTri);
+        myCanvas.setColor(Color.black);
+        myCanvas.fill(blackTri);
         return myImage;
     }
 
     protected static BufferedImage flagOfScotland() {
-        double slope = height / (double) width;
-        double offsetFactor = Math.sqrt(1 + slope * slope);
-        double stripeHeight = height / 10 * offsetFactor;
         Color blue = new Color(26045);
         BufferedImage myImage = drawBars(new Color[]{blue}, false);
         Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Path2D.Float drawPath = new Path2D.Float();
-        drawPath.moveTo(0, -stripeHeight);
-        drawPath.lineTo(getWidth(), height - stripeHeight);
-        drawPath.lineTo(getWidth(), height + stripeHeight);
-        drawPath.lineTo(0, stripeHeight);
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        double angle = Math.atan2(getHeight(), getWidth());
+        double centerX = getWidth() / 2.0;
+        double centerY = getHeight() / 2.0;
+
+        AffineTransform nesw = AffineTransform
+                .getRotateInstance(angle, centerX, centerY);
+        AffineTransform nwse = AffineTransform
+                .getRotateInstance(-angle, centerX, centerY);
+        Area rect = new Area(new Rectangle2D.Double(centerX - getWidth() * 0.6,
+                centerY - getHeight() / 10.0, getWidth() * 1.2,
+                getHeight() / 5.0));
+        Area saltire = rect.createTransformedArea(nesw);
+        saltire.add(rect.createTransformedArea(nwse));
+
         myCanvas.setColor(Color.white);
-        myCanvas.fill(drawPath);
-        drawPath.transform(new AffineTransform(1.0, 0.0, 0.0, -1.0, 0.0, height));
-        myCanvas.fill(drawPath);
+        myCanvas.fill(saltire);
         return myImage;
     }
 
     protected static BufferedImage flagOfSuisse() {
-        BufferedImage myImage = new BufferedImage(getWidth(), height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage myImage = drawBars(new Color[]{Color.BLACK}, true);
         Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        myCanvas.setColor(Color.black);
-        myCanvas.fillRect(0, 0, width, height);
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        double crossUnit = 5 * getHeight() / 160.0;
+        double centerX = getWidth() / 2.0;
+        double centerY = getHeight() / 2.0;
+
+        Rectangle2D.Double field = new Rectangle2D.Double(centerX - centerY, 0,
+                getHeight(), getHeight());
+        Rectangle2D.Double crossBar
+                = new Rectangle2D.Double(centerX - 3 * crossUnit,
+                        centerY - 10 * crossUnit, 6 * crossUnit,
+                        20 * crossUnit);
+
+        Area cross = new Area(crossBar);
+        cross.add(cross.createTransformedArea(AffineTransform
+                .getQuadrantRotateInstance(1, centerX, centerY)));
+
         myCanvas.setColor(Color.red);
-        myCanvas.fillRect(getWidth() / 2 - height / 2, 0, height, height);
+        myCanvas.fill(field);
         myCanvas.setColor(Color.white);
-        float crossUnit = 5 * height / 160.0F;
-        myCanvas.fill(new Rectangle2D.Float(getWidth() / 2 - 3 * crossUnit, height / 2 - 10 * crossUnit, 6 * crossUnit, 20 * crossUnit));
-        myCanvas.fill(new Rectangle2D.Float(getWidth() / 2 - 10 * crossUnit, height / 2 - 3 * crossUnit, 20 * crossUnit, 6 * crossUnit));
+        myCanvas.fill(cross);
         return myImage;
     }
 
     protected static BufferedImage flagOfTSA() {
         BufferedImage myImage = drawBars(new Color[]{Color.red}, false);
         Graphics2D myCanvas = myImage.createGraphics();
-        double hMargin = (2 * width - 3 * height) / 4.0;
-        double outRadius = 0.3 * height;
-        double inRadius = 0.24 * height;
+        double hMargin = (2 * getWidth() - 3 * getHeight()) / 4.0;
+        double outRadius = 0.3 * getHeight();
+        double inRadius = 0.24 * getHeight();
         Point2D.Double topLeft = new Point2D.Double(hMargin, 0);
-        Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, height);
+        Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, getHeight());
         Area shield = new Area(new Ellipse2D.Double(-outRadius, -outRadius, 2 * outRadius, 2 * outRadius));
         shield.subtract(new Area(new Ellipse2D.Double(-inRadius, -inRadius, 2 * inRadius, 2 * inRadius)));
         shield.add(new Area(AffineTransform.getScaleInstance(inRadius, inRadius).createTransformedShape(star)));
         myCanvas.setColor(new Color(224, 224, 224));
-        myCanvas.fill(shield.createTransformedArea(new AffineTransform(1, 0, 0, 1, width / 2.0, height / 2.0)));
+        myCanvas.fill(shield.createTransformedArea(new AffineTransform(1, 0, 0, 1, getWidth() / 2.0, getHeight() / 2.0)));
         myCanvas.setColor(Color.black);
-        myCanvas.draw(shield.createTransformedArea(new AffineTransform(1, 0, 0, 1, width / 2.0, height / 2.0)));
-        myCanvas.fill(new Rectangle2D.Double(0, 0, topLeft.x, height));
-        myCanvas.fill(new Rectangle2D.Double(bottomRight.x, 0, width - bottomRight.x, height));
+        myCanvas.draw(shield.createTransformedArea(new AffineTransform(1, 0, 0, 1, getWidth() / 2.0, getHeight() / 2.0)));
+        myCanvas.fill(new Rectangle2D.Double(0, 0, topLeft.x, getHeight()));
+        myCanvas.fill(new Rectangle2D.Double(bottomRight.x, 0, getWidth() - bottomRight.x, getHeight()));
         return myImage;
     }
 
@@ -511,11 +541,11 @@ public class GL6Util {
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        double jackUnit = width / 60.0;
+        double jackUnit = getWidth() / 60.0;
         double angle = Math.atan(-0.5);
         double centerX = getWidth() / 2.0;
         double centerY = getHeight() / 2.0;
-        
+
         AffineTransform nesw = AffineTransform.getRotateInstance(angle,
                 centerX, centerY);
         AffineTransform nwse = AffineTransform.getRotateInstance(-angle,
@@ -524,13 +554,13 @@ public class GL6Util {
                 .getQuadrantRotateInstance(1, centerX, centerY);
         AffineTransform ew = AffineTransform
                 .getQuadrantRotateInstance(2, centerX, centerY);
-        
+
         Area stripe = new Area(new Rectangle2D.Double(centerX - 35 * jackUnit,
                 centerY - 3 * jackUnit, 70 * jackUnit, 6 * jackUnit));
-        
+
         Area saltire = stripe.createTransformedArea(nesw);
         saltire.add(stripe.createTransformedArea(nwse));
-        
+
         Area redStripe = new Area(new Rectangle2D.Double(centerX,
                 centerY - 2 * jackUnit, 35 * jackUnit, 2 * jackUnit));
         redStripe.add(redStripe.createTransformedArea(ew));
@@ -542,15 +572,15 @@ public class GL6Util {
                 new Rectangle2D.Double(centerX - 35 * jackUnit,
                         centerY - 5 * jackUnit, 70 * jackUnit, 10 * jackUnit));
         bigStripe.add(bigStripe.createTransformedArea(ns));
-        
+
         Area redCross = new Area();
         redCross.add(stripe);
         redCross.add(stripe.createTransformedArea(ns));
-        
+
         Area blackout = new Area(new Rectangle2D.Double(0,
-                getHeight() / 2.0 + 15 * jackUnit, width, 5 * jackUnit));
+                getHeight() / 2.0 + 15 * jackUnit, getWidth(), 5 * jackUnit));
         blackout.add(blackout.createTransformedArea(ew));
-        
+
         myCanvas.setColor(Color.white);
         myCanvas.fill(saltire);
         myCanvas.setColor(red);
@@ -583,12 +613,12 @@ public class GL6Util {
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        final float starDiam = 2 * height / 65.0F;
-        final float starHSpace = width / 30.0F;
-        final float starVSpace = 7 * height / 130.0F;
+        final float starDiam = 2 * getHeight() / 65.0F;
+        final float starHSpace = getWidth() / 30.0F;
+        final float starVSpace = 7 * getHeight() / 130.0F;
         myCanvas.setColor(blue);
-        myCanvas.fill(new Rectangle2D.Float(0, 0, 0.4F * width,
-                7.0F * height / 13));
+        myCanvas.fill(new Rectangle2D.Float(0, 0, 0.4F * getWidth(),
+                7.0F * getHeight() / 13));
         myCanvas.setColor(Color.white);
         IntStream.range(0, 99)
                 .filter(i -> i % 2 == 0)
@@ -602,7 +632,7 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfUSSR() {
-        BufferedImage myImage = new BufferedImage(getWidth(), height,
+        BufferedImage myImage = new BufferedImage(getWidth(), getHeight(),
                 BufferedImage.TYPE_INT_RGB);
         return myImage;
     }
@@ -612,15 +642,15 @@ public class GL6Util {
     }
 
     protected static BufferedImage nordicCross(Color[] colors) {
-        final BufferedImage myImage = new BufferedImage(getWidth(), height,
+        final BufferedImage myImage = new BufferedImage(getWidth(), getHeight(),
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         myCanvas.setColor(colors[0]);
-        myCanvas.fillRect(0, 0, width, height);
+        myCanvas.fillRect(0, 0, getWidth(), getHeight());
         myCanvas.setColor(colors[1]);
-        myCanvas.fill(new Rectangle2D.Float(3 * width / 8 - 0.1F * height, 0.0F, 0.2F * height, 1.0F * height));
-        myCanvas.fill(new Rectangle2D.Float(0.0F, 0.4F * height, 1.0F * width, 0.2F * height));
+        myCanvas.fill(new Rectangle2D.Float(3 * getWidth() / 8 - 0.1F * getHeight(), 0.0F, 0.2F * getHeight(), 1.0F * getHeight()));
+        myCanvas.fill(new Rectangle2D.Float(0.0F, 0.4F * getHeight(), 1.0F * getWidth(), 0.2F * getHeight()));
         return myImage;
     }
 
