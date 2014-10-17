@@ -16,14 +16,14 @@ import java.util.stream.IntStream;
  */
 public class ROKTrigram {
 
-    public static Area createArea(int index, Rectangle2D.Double flag){
+    public static Area createArea(int index, Rectangle2D.Double flag) {
         return new ROKTrigram(index, flag).trigram;
     }
 
-    private final double angle = Math.atan2(2, 3);
+    private final double baseAngle = Math.atan2(2, 3);
     private final double[] angles = new double[]{
-        angle, Math.PI - angle,
-        Math.PI + angle, -angle};
+        baseAngle, Math.PI - baseAngle,
+        Math.PI + baseAngle, -baseAngle};
     private final boolean[][] tgBars = new boolean[][]{
         {false, false, false},
         {true, false, true},
@@ -39,17 +39,17 @@ public class ROKTrigram {
         buildBars(tgBars[index]);
         double flagUnit = flag.width / 3.0;
         double factor = 11.0 / 12.0 * flagUnit;
+        double angle = angles[index];
+        double hXlate = flag.getCenterX() + factor * Math.cos(angle);
+        double vXlate = flag.getCenterY() + factor * Math.sin(angle);
 
         blowUp = AffineTransform.getScaleInstance(flagUnit, flagUnit);
-        placement = new AffineTransform(Math.cos(angles[index]),
-                Math.sin(angles[index]),
-                -Math.sin(angles[index]),
-                Math.cos(angles[index]),
-                flag.getCenterX() + factor * Math.cos(angles[index]),
-                flag.getCenterY() + factor * Math.sin(angles[index]));
+        placement = AffineTransform.getRotateInstance(angle);
+        placement.preConcatenate(AffineTransform
+                .getTranslateInstance(hXlate, vXlate));
 
-        trigram.transform(AffineTransform.getTranslateInstance(-1.0 / 6,
-                -1.0 / 4));
+        trigram.transform(AffineTransform
+                .getTranslateInstance(-1.0 / 6, -1.0 / 4));
         trigram.transform(blowUp);
         trigram.transform(placement);
     }

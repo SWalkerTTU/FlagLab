@@ -188,6 +188,33 @@ public class GL6Util {
         return myImage;
     }
 
+    protected static BufferedImage drawBarsInBox(Color[] colors,
+            boolean isVertical, Rectangle2D.Double flagBox) {
+        final BufferedImage myImage
+                = new BufferedImage((int) Math.round(flagBox.width),
+                        (int) Math.round(flagBox.height),
+                        BufferedImage.TYPE_INT_ARGB);
+        Graphics2D myCanvas = myImage.createGraphics();
+
+        double rectWidth = (isVertical)
+                ? getWidth() / (double) colors.length : getWidth();
+        double rectHeight = (isVertical)
+                ? getHeight() : getHeight() / (double) colors.length;
+
+        IntStream.range(0, colors.length)
+                .mapToObj(i -> new ColorRect(
+                                ((isVertical)
+                                        ? new Rectangle2D.Double(i * rectWidth, 0,
+                                                rectWidth, rectHeight)
+                                        : new Rectangle2D.Double(0, i * rectHeight,
+                                                rectWidth, rectHeight)), colors[i]))
+                .forEachOrdered((ColorRect cr) -> {
+                    myCanvas.setColor(cr.getColor());
+                    myCanvas.fill(cr.getRect());
+                });
+        return myImage;
+    }
+
     protected static int enterIntGUI(String prompt) {
         String tempString = JOptionPane.showInputDialog(prompt);
         int temp = 1;
@@ -290,32 +317,36 @@ public class GL6Util {
 
     protected static BufferedImage flagOfPakistan() {
         Color green = new Color(26112);
-        BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
+        double flagUnit = getHeight() / 2.0;
+        Rectangle2D.Double flag = new Rectangle2D.Double(
+                getWidth() / 2.0 - 1.5 * flagUnit, 0,
+                3 * flagUnit, 2 * flagUnit);
+        BufferedImage myImage = drawBars(new Color[]{Color.black}, true);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        double hMargin = (2 * getWidth() - 3 * getHeight()) / 4.0;
-        double fieldWidth = getWidth() - 2 * hMargin;
-        Point2D.Double topLeft = new Point2D.Double(hMargin, 0);
-        Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, getHeight());
-        Point2D.Double ctr1 = new Point2D.Double(hMargin + fieldWidth * 5 / 8, getHeight() / 2.0);
-        double rad1 = 0.3 * getHeight();
-        double c2locRad = 0.65 * getHeight();
-        Point2D.Double ctr2 = new Point2D.Double(hMargin + fieldWidth - c2locRad * 9 / Math.sqrt(145), c2locRad * 8 / Math.sqrt(145));
-        double rad2 = 0.275 * getHeight();
-        myCanvas.setColor(green);
-        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth, getHeight()));
-        myCanvas.setColor(Color.white);
-        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth / 4.0, getHeight()));
-        Area crescent = new Area(new Ellipse2D.Double(ctr1.x - rad1, ctr1.y - rad1, 2 * rad1, 2 * rad1));
-        crescent.subtract(new Area(new Ellipse2D.Double(ctr2.x - rad2, ctr2.y - rad2, 2 * rad2, 2 * rad2)));
-        myCanvas.fill(crescent);
-        Point2D.Double ctr3 = new Point2D.Double(hMargin + fieldWidth - 0.55 * getHeight() * 9 / Math.sqrt(145), 0.55 * getHeight() * 8 / Math.sqrt(145));
-        AffineTransform starLoc = new AffineTransform(0.1 * getHeight(), 0, 0, 0.1 * getHeight(), ctr3.x, ctr3.y);
-        starLoc.rotate(Math.atan2(hMargin + fieldWidth - ctr3.x, ctr3.y));
-        myCanvas.fill(starLoc.createTransformedShape(star));
-        myCanvas.setColor(Color.black);
-        myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, getHeight()));
-        myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, getHeight()));
+//        double hMargin = (2 * getWidth() - 3 * getHeight()) / 4.0;
+//        double fieldWidth = getWidth() - 2 * hMargin;
+//        Point2D.Double topLeft = new Point2D.Double(hMargin, 0);
+//        Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, getHeight());
+//        Point2D.Double ctr1 = new Point2D.Double(hMargin + fieldWidth * 5 / 8, getHeight() / 2.0);
+//        double rad1 = 0.3 * getHeight();
+//        double c2locRad = 0.65 * getHeight();
+//        Point2D.Double ctr2 = new Point2D.Double(hMargin + fieldWidth - c2locRad * 9 / Math.sqrt(145), c2locRad * 8 / Math.sqrt(145));
+//        double rad2 = 0.275 * getHeight();
+//        myCanvas.setColor(green);
+//        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth, getHeight()));
+//        myCanvas.setColor(Color.white);
+//        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth / 4.0, getHeight()));
+//        Area crescent = new Area(new Ellipse2D.Double(ctr1.x - rad1, ctr1.y - rad1, 2 * rad1, 2 * rad1));
+//        crescent.subtract(new Area(new Ellipse2D.Double(ctr2.x - rad2, ctr2.y - rad2, 2 * rad2, 2 * rad2)));
+//        myCanvas.fill(crescent);
+//        Point2D.Double ctr3 = new Point2D.Double(hMargin + fieldWidth - 0.55 * getHeight() * 9 / Math.sqrt(145), 0.55 * getHeight() * 8 / Math.sqrt(145));
+//        AffineTransform starLoc = new AffineTransform(0.1 * getHeight(), 0, 0, 0.1 * getHeight(), ctr3.x, ctr3.y);
+//        starLoc.rotate(Math.atan2(hMargin + fieldWidth - ctr3.x, ctr3.y));
+//        myCanvas.fill(starLoc.createTransformedShape(star));
+//        myCanvas.setColor(Color.black);
+//        myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, getHeight()));
+//        myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, getHeight()));
         return myImage;
     }
 
@@ -333,21 +364,29 @@ public class GL6Util {
                 RenderingHints.VALUE_ANTIALIAS_ON);
         Color red = new Color(12979248);
         Color blue = new Color(13432);
-        AffineTransform shift = AffineTransform
-                .getTranslateInstance(flag.getCenterX(), flag.getCenterY());
-        shift.rotate(angle);
+//        AffineTransform shift = AffineTransform
+//                .getTranslateInstance(flag.getCenterX(), flag.getCenterY());
+//        shift.rotate(angle);
         AffineTransform yflip = AffineTransform.getScaleInstance(-1, 1);
-        Shape largeCirc = new Ellipse2D.Double(-flagUnit / 2, -flagUnit / 2,
-                flagUnit, flagUnit);
+        Shape largeCirc = new Ellipse2D.Double(-0.5, -0.5 , 1, 1);
         Area tao = new Area(largeCirc);
-        Area smallCirc = new Area(
-                new Ellipse2D.Double(-flagUnit / 2, -flagUnit / 4,
-                        flagUnit / 2, flagUnit / 2));
-        tao.subtract(new Area(new Rectangle2D.Double(-flagUnit / 2, 0,
-                flagUnit, flagUnit / 2)));
-        tao.add(smallCirc);
-        tao.subtract(smallCirc.createTransformedArea(yflip));
-
+        Shape smallCirc = new Ellipse2D.Double(-0.5, -0.25, 0.5, 0.5);
+        tao.subtract(new Area(new Rectangle2D.Double(-0.5, 0, 1, 0.5)));
+        tao.add(new Area(smallCirc));
+        tao.subtract(new Area(yflip.createTransformedShape(smallCirc)));
+        
+        AffineTransform circBlowUp = AffineTransform
+                .getScaleInstance(flagUnit, flagUnit);
+        AffineTransform circXlate = AffineTransform
+                .getTranslateInstance(flag.getCenterX(), flag.getCenterY());
+        AffineTransform circRotate = AffineTransform
+                .getRotateInstance(angle, flag.getCenterX(), flag.getCenterY());
+        largeCirc = circBlowUp.createTransformedShape(largeCirc);
+        largeCirc = circXlate.createTransformedShape(largeCirc);
+        tao.transform(circBlowUp);
+        tao.transform(circXlate);
+        tao.transform(circRotate);
+        
         Area bagua = new Area();
         IntStream.range(0, 4)
                 .mapToObj((int i) -> ROKTrigram.createArea(i, flag))
@@ -358,9 +397,9 @@ public class GL6Util {
         blackout.subtract(new Area(flag));
 
         myCanvas.setColor(blue);
-        myCanvas.fill(shift.createTransformedShape(largeCirc));
+        myCanvas.fill(largeCirc);
         myCanvas.setColor(red);
-        myCanvas.fill(tao.createTransformedArea(shift));
+        myCanvas.fill(tao);
         myCanvas.setColor(Color.black);
         myCanvas.fill(bagua);
         myCanvas.fill(blackout);
