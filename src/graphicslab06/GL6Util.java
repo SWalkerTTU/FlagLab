@@ -350,15 +350,15 @@ public class GL6Util {
         myCanvas.setColor(red);
         myCanvas.fill(tao.createTransformedArea(shift));
 
-        AffineTransform xfne = new AffineTransform(6 / Math.sqrt(13),
+        AffineTransform xfne = new AffineTransform(-3 / Math.sqrt(13),
                 2 / Math.sqrt(13), -2 / Math.sqrt(13),
-                3 / Math.sqrt(13),
+                -3 / Math.sqrt(13),
                 centerX + 1.75 / Math.sqrt(13) * flagUnit,
                 centerY - 2.25 / Math.sqrt(13) * flagUnit);
 //        xfne.setToTranslation(centerX + 2.75 / Math.sqrt(13) * flagUnit, 
 //                centerY - 0.75 / Math.sqrt(13) * flagUnit);
         
-        xfne.setToIdentity();
+//        xfne.setToIdentity();
         
         Path2D.Double testPath = new Path2D.Double();
         testPath.moveTo((1.5 + 1.75 / Math.sqrt(13)) * flagUnit, (1 - 2.25 / Math.sqrt(13)) * flagUnit);
