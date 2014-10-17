@@ -350,9 +350,22 @@ public class GL6Util {
         myCanvas.setColor(red);
         myCanvas.fill(tao.createTransformedArea(shift));
 
-        AffineTransform xfne = AffineTransform
-                .getRotateInstance(-angle, flagUnit / 6, flagUnit / 4);
-        xfne.translate(centerX, 2 * flagUnit - 7 * flagUnit / 6 * Math.sin(- angle));
+        AffineTransform xfne = new AffineTransform(6 / Math.sqrt(13),
+                2 / Math.sqrt(13), -2 / Math.sqrt(13),
+                3 / Math.sqrt(13),
+                centerX + 1.75 / Math.sqrt(13) * flagUnit,
+                centerY - 2.25 / Math.sqrt(13) * flagUnit);
+//        xfne.setToTranslation(centerX + 2.75 / Math.sqrt(13) * flagUnit, 
+//                centerY - 0.75 / Math.sqrt(13) * flagUnit);
+        
+        xfne.setToIdentity();
+        
+        Path2D.Double testPath = new Path2D.Double();
+        testPath.moveTo((1.5 + 1.75 / Math.sqrt(13)) * flagUnit, (1 - 2.25 / Math.sqrt(13)) * flagUnit);
+        testPath.lineTo((1.5 + 2.75 / Math.sqrt(13)) * flagUnit, (1 - 0.75 / Math.sqrt(13)) * flagUnit);
+        testPath.lineTo((1.5 + 3.75 / Math.sqrt(13)) * flagUnit, (1 - 17.0 / 12 / Math.sqrt(13)) * flagUnit);
+        testPath.lineTo((1.5 + 2.75 / Math.sqrt(13)) * flagUnit, (1 - 35.0 / 12 / Math.sqrt(13)) * flagUnit);
+        testPath.closePath();
         
         Trigram ne = new Trigram(new boolean[]{false, true, false},
                 flagUnit, xfne);
@@ -360,7 +373,9 @@ public class GL6Util {
        
         myCanvas.setColor(Color.black);
         myCanvas.fill(ne.getTrigram());
-
+        myCanvas.setColor(red);
+        myCanvas.fill(testPath);
+        
 //        shift.rotate(angle);
 //        myCanvas.setColor(red);
 //        myCanvas.fill(tao.createTransformedArea(shift));
