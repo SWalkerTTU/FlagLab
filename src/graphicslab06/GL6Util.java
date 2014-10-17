@@ -15,6 +15,9 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.IntStream;
 import javax.swing.JOptionPane;
@@ -317,23 +320,23 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfROK() {
-        double angle = Math.atan2(2, 3);
-        double flagWidth = 3 * getHeight() / 2.0;
         double flagUnit = getHeight() / 2.0;
-        double centerX = 1.5 * flagUnit;
-        double centerY = flagUnit;
-        Point2D.Double topLeft = new Point2D.Double(getWidth() / 2.0 - flagWidth / 2.0, 0);
-        Point2D.Double bottomRight = new Point2D.Double(getWidth() / 2.0 + flagWidth / 2.0, getHeight());
+        Rectangle2D.Double flag = new Rectangle2D.Double(
+                getWidth() / 2.0 - 1.5 * flagUnit, 0,
+                3 * flagUnit, 2 * flagUnit);
+
+        double angle = Math.atan2(2, 3);
+
         BufferedImage myImage = drawBars(new Color[]{Color.white}, false);
         Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
         Color red = new Color(12979248);
         Color blue = new Color(13432);
         AffineTransform shift = AffineTransform
-                .getTranslateInstance(getWidth() / 2.0, getHeight() / 2.0);
+                .getTranslateInstance(flag.getCenterX(), flag.getCenterY());
         shift.rotate(angle);
         AffineTransform yflip = AffineTransform.getScaleInstance(-1, 1);
-//        AffineTransform xflip = AffineTransform.getScaleInstance(1, -1);
         Shape largeCirc = new Ellipse2D.Double(-flagUnit / 2, -flagUnit / 2,
                 flagUnit, flagUnit);
         Area tao = new Area(largeCirc);
@@ -345,84 +348,23 @@ public class GL6Util {
         tao.add(smallCirc);
         tao.subtract(smallCirc.createTransformedArea(yflip));
 
+        Area bagua = new Area();
+        IntStream.range(0, 4)
+                .mapToObj((int i) -> ROKTrigram.createArea(i, flag))
+                .forEach(bagua::add);
+
+        Area blackout = new Area(new Rectangle2D.Double(0, 0, getWidth(),
+                getHeight()));
+        blackout.subtract(new Area(flag));
+
         myCanvas.setColor(blue);
         myCanvas.fill(shift.createTransformedShape(largeCirc));
         myCanvas.setColor(red);
         myCanvas.fill(tao.createTransformedArea(shift));
-
-        AffineTransform xfne = new AffineTransform(-3 / Math.sqrt(13),
-                2 / Math.sqrt(13), -2 / Math.sqrt(13),
-                -3 / Math.sqrt(13),
-                centerX + 1.75 / Math.sqrt(13) * flagUnit,
-                centerY - 2.25 / Math.sqrt(13) * flagUnit);
-//        xfne.setToTranslation(centerX + 2.75 / Math.sqrt(13) * flagUnit, 
-//                centerY - 0.75 / Math.sqrt(13) * flagUnit);
-        
-//        xfne.setToIdentity();
-        
-        Path2D.Double testPath = new Path2D.Double();
-        testPath.moveTo((1.5 + 1.75 / Math.sqrt(13)) * flagUnit, (1 - 2.25 / Math.sqrt(13)) * flagUnit);
-        testPath.lineTo((1.5 + 2.75 / Math.sqrt(13)) * flagUnit, (1 - 0.75 / Math.sqrt(13)) * flagUnit);
-        testPath.lineTo((1.5 + 3.75 / Math.sqrt(13)) * flagUnit, (1 - 17.0 / 12 / Math.sqrt(13)) * flagUnit);
-        testPath.lineTo((1.5 + 2.75 / Math.sqrt(13)) * flagUnit, (1 - 35.0 / 12 / Math.sqrt(13)) * flagUnit);
-        testPath.closePath();
-        
-        Trigram ne = new Trigram(new boolean[]{false, true, false},
-                flagUnit, xfne);
-
-       
         myCanvas.setColor(Color.black);
-        myCanvas.fill(ne.getTrigram());
-        myCanvas.setColor(red);
-        myCanvas.fill(testPath);
-        
-//        shift.rotate(angle);
-//        myCanvas.setColor(red);
-//        myCanvas.fill(tao.createTransformedArea(shift));
-//        shift.concatenate(xflip);
-//        shift.concatenate(yflip);
-//        myCanvas.setColor(blue);
-//        myCanvas.fill(tao.createTransformedArea(shift));
-//        final double tgXOffset = flagUnit * 3 / 4;
-//        final double tgYOffset = -flagUnit / 4;
-//        final double tgWidth = flagUnit / 3;
-//        final double tgHeight = flagUnit / 2;
-//        final double tgRemWidth = flagUnit / 24;
-//        final double tgBarWidth = flagUnit / 12;
-//        final double tgDivOff = tgYOffset + tgHeight / 2 - tgRemWidth / 2;
-//        Area trigramBase = new Area(new Rectangle2D.Double(tgXOffset, tgYOffset, tgWidth, tgHeight));
-//        Area[] tgRemovers = new Area[4];
-//        for (int i = 0; i < tgRemovers.length; i++) {
-//            tgRemovers[i] = new Area(new Rectangle2D.Double(tgXOffset + tgBarWidth, tgYOffset, tgRemWidth, tgHeight));
-//            tgRemovers[i].add(new Area(new Rectangle2D.Double(tgXOffset + 2 * tgBarWidth + tgRemWidth, tgYOffset, tgRemWidth, tgHeight)));
-//        }
-//        tgRemovers[0].add(new Area(new Rectangle2D.Double(tgXOffset, tgDivOff, tgWidth, tgRemWidth)));
-//        tgRemovers[1].add(new Area(new Rectangle2D.Double(tgXOffset + tgBarWidth + tgRemWidth, tgDivOff, tgBarWidth, tgRemWidth)));
-//        tgRemovers[3].add(new Area(new Rectangle2D.Double(tgXOffset, tgDivOff, tgWidth, tgRemWidth)));
-//        tgRemovers[3].subtract(new Area(new Rectangle2D.Double(tgXOffset + tgBarWidth + tgRemWidth, tgDivOff, tgBarWidth, tgRemWidth)));
-//        shift.setTransform(1, 0, 0, 1, getWidth() / 2.0, getHeight() / 2.0);
-//        myCanvas.setColor(Color.BLACK);
-//        for (int i = 0; i < 4; i++) {
-//            Area drawGram = new Area(trigramBase);
-//            drawGram.subtract(tgRemovers[i]);
-//            switch (i) {
-//                case 0:
-//                    shift.rotate(angle);
-//                    break;
-//                case 1:
-//                case 3:
-//                    shift.rotate(Math.PI - 2 * angle);
-//                    break;
-//                case 2:
-//                    shift.rotate(2 * angle);
-//                    break;
-//                default:
-//            }
-//            myCanvas.fill(drawGram.createTransformedArea(shift));
-//        }
-//        myCanvas.setColor(Color.black);
-//        myCanvas.fill(new Rectangle2D.Double(0, 0, topLeft.x, getHeight()));
-//        myCanvas.fill(new Rectangle2D.Double(bottomRight.x, 0, getWidth() - bottomRight.x, getHeight()));
+        myCanvas.fill(bagua);
+        myCanvas.fill(blackout);
+
         return myImage;
     }
 
