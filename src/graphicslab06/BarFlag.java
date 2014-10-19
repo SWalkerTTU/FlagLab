@@ -28,6 +28,6 @@ public class BarFlag extends Flag {
     
     @Override
     protected void drawFlag(){
-        image = GL6Util.drawBars(getColors(), vertical);
+        super.setImage(GL6Util.drawBarFlag(getColors(), vertical));
     }
 }

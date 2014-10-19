@@ -5,7 +5,13 @@
 package graphicslab06;
 
 //import gl6test.GraphicsLab06A;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -14,7 +20,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.stream.IntStream;
@@ -27,14 +32,12 @@ import javax.swing.JOptionPane;
 public class GL6Util {
 
     private static int height;
-    private static final Area star = buildStar();
+    static final Area star = new Area();
     private static int width;
 
-    private static Area buildStar() {
-        final double ratio = (3 - Math.sqrt(5)) / 2;
-        double angle = 2 * Math.PI / 5;
-        Area starArea = new Area();
-
+    static {
+        final double ratio = (3 - Math.sqrt(5)) / 2.0;
+        final double angle = 2 * Math.PI / 5;
         Path2D.Double tri = new Path2D.Double();
         tri.moveTo(Math.cos(Math.PI / 2), Math.sin(-Math.PI / 2));
         tri.lineTo(Math.cos(Math.PI / 10) * ratio,
@@ -42,13 +45,13 @@ public class GL6Util {
         tri.lineTo(-Math.cos(Math.PI / 10) * ratio,
                 Math.sin(Math.PI / 10) * ratio);
         tri.closePath();
-
-        IntStream.range(0, 5).mapToObj((int i)
-                -> AffineTransform.getRotateInstance(i * angle))
+        IntStream.range(0, 5)
+                .mapToObj((int i)
+                        -> AffineTransform.getRotateInstance(i * angle))
                 .map((AffineTransform at) -> at.createTransformedShape(tri))
-                .forEach((Shape s) -> starArea.add(new Area(s)));
+                .map(s -> new Area(s))
+                .forEach(star::add);
 
-        return starArea;
     }
 
     public static void delay(int ms) {
@@ -58,38 +61,26 @@ public class GL6Util {
         }
     }
 
-    /**
-     * @return the height
-     */
     public static int getHeight() {
         return height;
     }
 
-    /**
-     * @param aHeight the height to set
-     */
     public static void setHeight(int aHeight) {
         height = aHeight;
     }
 
-    /**
-     * @return the width
-     */
     public static int getWidth() {
         return width;
     }
 
-    /**
-     * @param aWidth the width to set
-     */
     public static void setWidth(int aWidth) {
         width = aWidth;
     }
 
     public static void showName(Graphics g, String name) {
         Graphics2D g2 = (Graphics2D) g;
-        Font countryName = new Font("Algerian", Font.BOLD, 48);
-        TextLayout layout = new TextLayout(name, countryName, g2.getFontRenderContext());
+        Font nameFont = new Font("Algerian", Font.BOLD, 48);
+        TextLayout layout = new TextLayout(name, nameFont, g2.getFontRenderContext());
         Rectangle2D box = layout.getBounds();
 
         box.setRect(25, 50, box.getWidth() + 50, box.getHeight() + 30);
@@ -120,24 +111,33 @@ public class GL6Util {
             default:
                 boxSize = 25;
         }
-        boolean[][] map = new boolean[imgWidth / boxSize][imgHeight / boxSize];
+        int numCols = (int) Math.ceil(imgWidth / (double) boxSize);
+        int numRows = (int) Math.ceil(imgHeight / (double) boxSize);
+        boolean[][] map = new boolean[numCols][numRows];
         int freeCells = map.length * map[0].length;
         Random rnd = new Random();
-        BufferedImage draw = new BufferedImage(imgWidth, imgHeight, image.getType());
-        Graphics2D drawG = draw.createGraphics();
-        drawG.setBackground(Color.black);
-        drawG.clearRect(0, 0, imgWidth, imgHeight);
+
+        BufferedImage draw = new BufferedImage(numCols * boxSize,
+                numRows * boxSize, image.getType());
+        draw.createGraphics().drawImage(image, null, 0, 0);
+
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setBackground(Color.BLACK);
+        g2.clearRect(0, 0, imgWidth, imgHeight);
 
         while (freeCells > 0) {
+            int col, row;
             int x, y;
             do {
-                x = rnd.nextInt(map.length);
-                y = rnd.nextInt(map[0].length);
-            } while (map[x][y]);
-            map[x][y] = true;
+                col = rnd.nextInt(map.length);
+                row = rnd.nextInt(map[0].length);
+            } while (map[col][row]);
+            map[col][row] = true;
             freeCells--;
-            draw.setData(image.getData(new Rectangle(x * boxSize, y * boxSize, boxSize, boxSize)));
-            g.drawImage(draw, 0, 0, null);
+            x = col * boxSize;
+            y = row * boxSize;
+            BufferedImage smallBox = draw.getSubimage(x, y, boxSize, boxSize);
+            g2.drawImage(smallBox, null, x, y);
         }
     }
 
@@ -335,60 +335,7 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfROK() {
-        double flagUnit = getHeight() / 2.0;
-        Rectangle2D.Double flag = new Rectangle2D.Double(
-                getWidth() / 2.0 - 1.5 * flagUnit, 0,
-                3 * flagUnit, 2 * flagUnit);
-
-        double angle = Math.atan2(2, 3);
-
-        BufferedImage myImage = drawBars(new Color[]{Color.white}, false);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        Color red = new Color(12979248);
-        Color blue = new Color(13432);
-//        AffineTransform shift = AffineTransform
-//                .getTranslateInstance(flag.getCenterX(), flag.getCenterY());
-//        shift.rotate(angle);
-        AffineTransform yflip = AffineTransform.getScaleInstance(-1, 1);
-        Shape largeCirc = new Ellipse2D.Double(-0.5, -0.5, 1, 1);
-        Area tao = new Area(largeCirc);
-        Shape smallCirc = new Ellipse2D.Double(-0.5, -0.25, 0.5, 0.5);
-        tao.subtract(new Area(new Rectangle2D.Double(-0.5, 0, 1, 0.5)));
-        tao.add(new Area(smallCirc));
-        tao.subtract(new Area(yflip.createTransformedShape(smallCirc)));
-
-        AffineTransform circBlowUp = AffineTransform
-                .getScaleInstance(flagUnit, flagUnit);
-        AffineTransform circXlate = AffineTransform
-                .getTranslateInstance(flag.getCenterX(), flag.getCenterY());
-        AffineTransform circRotate = AffineTransform
-                .getRotateInstance(angle, flag.getCenterX(), flag.getCenterY());
-        largeCirc = circBlowUp.createTransformedShape(largeCirc);
-        largeCirc = circXlate.createTransformedShape(largeCirc);
-        tao.transform(circBlowUp);
-        tao.transform(circXlate);
-        tao.transform(circRotate);
-
-        Area bagua = new Area();
-        IntStream.range(0, 4)
-                .mapToObj((int i) -> ROKTrigram.createArea(i, flag))
-                .forEach(bagua::add);
-
-        Area blackout = new Area(new Rectangle2D.Double(0, 0, getWidth(),
-                getHeight()));
-        blackout.subtract(new Area(flag));
-
-        myCanvas.setColor(blue);
-        myCanvas.fill(largeCirc);
-        myCanvas.setColor(red);
-        myCanvas.fill(tao);
-        myCanvas.setColor(Color.black);
-        myCanvas.fill(bagua);
-        myCanvas.fill(blackout);
-
-        return myImage;
+        return new FlagOfROK().getImage();
     }
 
     protected static BufferedImage flagOfRSA() {
@@ -473,7 +420,7 @@ public class GL6Util {
         return myImage;
     }
 
-    protected static BufferedImage flagOfSuisse() {
+    static BufferedImage flagOfSuisse() {
         BufferedImage myImage = drawBars(new Color[]{Color.BLACK}, true);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -500,156 +447,34 @@ public class GL6Util {
         return myImage;
     }
 
-    protected static BufferedImage flagOfTSA() {
-        BufferedImage myImage = drawBars(new Color[]{Color.red}, false);
+    static BufferedImage flagOfTexas() {
+        return new FlagOfTexas().getImage();
+    }
+
+    static BufferedImage flagOfUK() {
+        return new FlagOfUK().getImage();
+    }
+
+    static BufferedImage flagOfUSA() {
+        return new FlagOfUSA().getImage();
+    }
+
+    static BufferedImage paintOnBG(BufferedImage flagImage) {
+        BufferedImage myImage = drawBars(new Color[]{Color.BLACK}, true);
         Graphics2D myCanvas = myImage.createGraphics();
-        double hMargin = (2 * getWidth() - 3 * getHeight()) / 4.0;
-        double outRadius = 0.3 * getHeight();
-        double inRadius = 0.24 * getHeight();
-        Point2D.Double topLeft = new Point2D.Double(hMargin, 0);
-        Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, getHeight());
-        Area shield = new Area(new Ellipse2D.Double(-outRadius, -outRadius, 2 * outRadius, 2 * outRadius));
-        shield.subtract(new Area(new Ellipse2D.Double(-inRadius, -inRadius, 2 * inRadius, 2 * inRadius)));
-        shield.add(new Area(AffineTransform.getScaleInstance(inRadius, inRadius).createTransformedShape(star)));
-        myCanvas.setColor(new Color(224, 224, 224));
-        myCanvas.fill(shield.createTransformedArea(new AffineTransform(1, 0, 0, 1, getWidth() / 2.0, getHeight() / 2.0)));
-        myCanvas.setColor(Color.black);
-        myCanvas.draw(shield.createTransformedArea(new AffineTransform(1, 0, 0, 1, getWidth() / 2.0, getHeight() / 2.0)));
-        myCanvas.fill(new Rectangle2D.Double(0, 0, topLeft.x, getHeight()));
-        myCanvas.fill(new Rectangle2D.Double(bottomRight.x, 0, getWidth() - bottomRight.x, getHeight()));
+        int x = (int) Math.round((getWidth() - flagImage.getWidth()) / 2.0);
+        int y = (int) Math.round((getHeight() - flagImage.getHeight()) / 2.0);
+        myCanvas.drawImage(flagImage, null, x, y);
         return myImage;
     }
 
-    protected static BufferedImage flagOfTexas() {
-        Color red = new Color(12519984);
-        Color blue = new Color(10344);
-        Color blank = new Color(0, 0, 0, 0);
-        BufferedImage myImage = drawBars(new Color[]{Color.white, red}, false);
-        Graphics2D myCanvas = myImage.createGraphics();
-        BufferedImage overlay = drawBars(new Color[]{blue, blank, blank}, true);
-        myCanvas.drawImage(overlay, null, 0, 0);
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        myCanvas.setColor(Color.white);
-        AffineTransform txStar
-                = new AffineTransform(getWidth() / 8.0, 0.0, 0.0,
-                        getWidth() / 8.0, getWidth() / 6.0, getHeight() / 2.0);
-        myCanvas.fill(star.createTransformedArea(txStar));
-        return myImage;
-    }
 
-    protected static BufferedImage flagOfUK() {
-        Color red = new Color(13504806);
-        Color blue = new Color(11135);
-        BufferedImage myImage = drawBars(new Color[]{blue}, false);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        double jackUnit = getWidth() / 60.0;
-        double angle = Math.atan(-0.5);
-        double centerX = getWidth() / 2.0;
-        double centerY = getHeight() / 2.0;
-
-        AffineTransform nesw = AffineTransform.getRotateInstance(angle,
-                centerX, centerY);
-        AffineTransform nwse = AffineTransform.getRotateInstance(-angle,
-                centerX, centerY);
-        AffineTransform ns = AffineTransform
-                .getQuadrantRotateInstance(1, centerX, centerY);
-        AffineTransform ew = AffineTransform
-                .getQuadrantRotateInstance(2, centerX, centerY);
-
-        Area stripe = new Area(new Rectangle2D.Double(centerX - 35 * jackUnit,
-                centerY - 3 * jackUnit, 70 * jackUnit, 6 * jackUnit));
-
-        Area saltire = stripe.createTransformedArea(nesw);
-        saltire.add(stripe.createTransformedArea(nwse));
-
-        Area redStripe = new Area(new Rectangle2D.Double(centerX,
-                centerY - 2 * jackUnit, 35 * jackUnit, 2 * jackUnit));
-        redStripe.add(redStripe.createTransformedArea(ew));
-
-        Area redSaltire = redStripe.createTransformedArea(nesw);
-        redSaltire.add(redStripe.createTransformedArea(nwse));
-
-        Area bigStripe = new Area(
-                new Rectangle2D.Double(centerX - 35 * jackUnit,
-                        centerY - 5 * jackUnit, 70 * jackUnit, 10 * jackUnit));
-        bigStripe.add(bigStripe.createTransformedArea(ns));
-
-        Area redCross = new Area();
-        redCross.add(stripe);
-        redCross.add(stripe.createTransformedArea(ns));
-
-        Area blackout = new Area(new Rectangle2D.Double(0,
-                getHeight() / 2.0 + 15 * jackUnit, getWidth(), 5 * jackUnit));
-        blackout.add(blackout.createTransformedArea(ew));
-
-        myCanvas.setColor(Color.white);
-        myCanvas.fill(saltire);
-        myCanvas.setColor(red);
-        myCanvas.fill(redSaltire);
-        myCanvas.setColor(Color.white);
-        myCanvas.fill(bigStripe);
-        myCanvas.setColor(red);
-        myCanvas.fill(redCross);
-        myCanvas.setColor(Color.black);
-        myCanvas.fill(blackout);
-        return myImage;
-    }
-
-    protected static BufferedImage flagOfUSA() {
-        Color red = new Color(0xb22234);
-        Color blue = new Color(0x3c3b6e);
-        Color white = Color.white;
-        Color[] stripes = new Color[13];
-        IntStream.range(0, stripes.length)
-                .filter(i -> i % 2 == 0)
-                .forEach((int i) -> {
-                    stripes[i] = red;
-                });
-        IntStream.range(0, stripes.length)
-                .filter(i -> i % 2 == 1)
-                .forEach((int i) -> {
-                    stripes[i] = white;
-                });
-        BufferedImage myImage = drawBars(stripes, false);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        final float starDiam = 2 * getHeight() / 65.0F;
-        final float starHSpace = getWidth() / 30.0F;
-        final float starVSpace = 7 * getHeight() / 130.0F;
-        myCanvas.setColor(blue);
-        myCanvas.fill(new Rectangle2D.Float(0, 0, 0.4F * getWidth(),
-                7.0F * getHeight() / 13));
-        myCanvas.setColor(Color.white);
-        IntStream.range(0, 99)
-                .filter(i -> i % 2 == 0)
-                .parallel()
-                .mapToObj(i -> new AffineTransform(starDiam, 0, 0, starDiam,
-                                (i % 11 + 1) * starHSpace,
-                                (i / 11 + 1) * starVSpace))
-                .map((AffineTransform at) -> at.createTransformedShape(star))
-                .forEach(myCanvas::fill);
-        return myImage;
-    }
-
-    protected static BufferedImage flagOfUSSR() {
-        BufferedImage myImage = new BufferedImage(getWidth(), getHeight(),
-                BufferedImage.TYPE_INT_RGB);
-        return myImage;
-    }
-
-    protected static void niceShot(BufferedImage img) {
-
-    }
-
-    protected static BufferedImage nordicCross(Color[] colors) {
+    static BufferedImage nordicCross(Color[] colors) {
         final BufferedImage myImage = new BufferedImage(getWidth(), getHeight(),
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
         myCanvas.setColor(colors[0]);
         myCanvas.fillRect(0, 0, getWidth(), getHeight());
         myCanvas.setColor(colors[1]);
@@ -658,7 +483,7 @@ public class GL6Util {
         return myImage;
     }
 
-    protected static Color[] tpGen() {
+    static Color[] tpGen() {
         float[] r = new float[]{0.6F, 1, 0, 0, 1, 1, 0};
         float[] g = new float[]{0.6F, 1, 1, 1, 0, 0, 0};
         float[] b = new float[]{0.6F, 0, 1, 0, 1, 0, 1};
@@ -666,4 +491,27 @@ public class GL6Util {
                 .mapToObj((int i) -> new Color(r[i], g[i], b[i]))
                 .toArray(Color[]::new);
     }
+
+    static Rectangle2D.Double makeFlagBox(double flagRatio) {
+        double screenRatio = getWidth() / (double) getHeight();
+        double flagWidth = getWidth(),
+                flagHeight = getHeight();
+
+        if (flagRatio > screenRatio) {
+            flagHeight = getWidth() / flagRatio;
+        } else {
+            if (flagRatio < screenRatio) {
+                flagWidth = flagRatio * getHeight();
+            }
+        }
+        return new Rectangle2D.Double(0, 0,
+                flagWidth, flagHeight);
+    }
+
+    static BufferedImage drawBarFlag(Color[] colors, boolean vertical) {
+        Rectangle2D.Double rect = makeFlagBox(1.5);
+        BufferedImage img = drawBarsInBox(colors, vertical, rect);
+        return paintOnBG(img);
+    }
+
 }

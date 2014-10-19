@@ -25,8 +25,10 @@ public class UniqueFlag extends Flag {
 
     @Override
     protected void drawFlag() {
+        BufferedImage img;
         try {
-            image = (BufferedImage) drawMethod.invoke(this, (Object[]) null);
+            img = (BufferedImage) drawMethod.invoke(this, (Object[]) null);
+            super.setImage(img);
         } catch (IllegalAccessException |
                 IllegalArgumentException |
                 InvocationTargetException ex) {
