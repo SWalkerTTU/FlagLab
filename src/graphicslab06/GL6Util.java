@@ -14,10 +14,8 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.stream.IntStream;
 import javax.swing.JOptionPane;
@@ -166,26 +164,8 @@ public class GL6Util {
     }
 
     protected static BufferedImage drawBars(Color[] colors, boolean isVertical) {
-        final BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics2D myCanvas = myImage.createGraphics();
-
-        double rectWidth = (isVertical)
-                ? getWidth() / (double) colors.length : getWidth();
-        double rectHeight = (isVertical)
-                ? getHeight() : getHeight() / (double) colors.length;
-
-        IntStream.range(0, colors.length)
-                .mapToObj(i -> new ColorRect(
-                                ((isVertical)
-                                        ? new Rectangle2D.Double(i * rectWidth, 0,
-                                                rectWidth, rectHeight)
-                                        : new Rectangle2D.Double(0, i * rectHeight,
-                                                rectWidth, rectHeight)), colors[i]))
-                .forEachOrdered((ColorRect cr) -> {
-                    myCanvas.setColor(cr.getColor());
-                    myCanvas.fill(cr.getRect());
-                });
-        return myImage;
+        return drawBarsInBox(colors, isVertical,
+                new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
     }
 
     protected static BufferedImage drawBarsInBox(Color[] colors,
@@ -197,21 +177,25 @@ public class GL6Util {
         Graphics2D myCanvas = myImage.createGraphics();
 
         double rectWidth = (isVertical)
-                ? getWidth() / (double) colors.length : getWidth();
+                ? myImage.getWidth() / (double) colors.length
+                : myImage.getWidth();
         double rectHeight = (isVertical)
-                ? getHeight() : getHeight() / (double) colors.length;
+                ? myImage.getHeight()
+                : myImage.getHeight() / (double) colors.length;
 
         IntStream.range(0, colors.length)
-                .mapToObj(i -> new ColorRect(
-                                ((isVertical)
-                                        ? new Rectangle2D.Double(i * rectWidth, 0,
-                                                rectWidth, rectHeight)
-                                        : new Rectangle2D.Double(0, i * rectHeight,
-                                                rectWidth, rectHeight)), colors[i]))
-                .forEachOrdered((ColorRect cr) -> {
-                    myCanvas.setColor(cr.getColor());
-                    myCanvas.fill(cr.getRect());
+                .mapToObj((int i) -> {
+                    Rectangle2D.Double rect = (isVertical)
+                            ? new Rectangle2D.Double(i * rectWidth, 0,
+                                    rectWidth, rectHeight)
+                            : new Rectangle2D.Double(0, i * rectHeight, rectWidth, rectHeight);
+                    return new HashMap.SimpleEntry<Rectangle2D.Double, Color>(rect, colors[i]);
+                })
+                .forEach(sie -> {
+                    myCanvas.setColor(sie.getValue());
+                    myCanvas.fill(sie.getKey());
                 });
+
         return myImage;
     }
 
@@ -368,13 +352,13 @@ public class GL6Util {
 //                .getTranslateInstance(flag.getCenterX(), flag.getCenterY());
 //        shift.rotate(angle);
         AffineTransform yflip = AffineTransform.getScaleInstance(-1, 1);
-        Shape largeCirc = new Ellipse2D.Double(-0.5, -0.5 , 1, 1);
+        Shape largeCirc = new Ellipse2D.Double(-0.5, -0.5, 1, 1);
         Area tao = new Area(largeCirc);
         Shape smallCirc = new Ellipse2D.Double(-0.5, -0.25, 0.5, 0.5);
         tao.subtract(new Area(new Rectangle2D.Double(-0.5, 0, 1, 0.5)));
         tao.add(new Area(smallCirc));
         tao.subtract(new Area(yflip.createTransformedShape(smallCirc)));
-        
+
         AffineTransform circBlowUp = AffineTransform
                 .getScaleInstance(flagUnit, flagUnit);
         AffineTransform circXlate = AffineTransform
@@ -386,7 +370,7 @@ public class GL6Util {
         tao.transform(circBlowUp);
         tao.transform(circXlate);
         tao.transform(circRotate);
-        
+
         Area bagua = new Area();
         IntStream.range(0, 4)
                 .mapToObj((int i) -> ROKTrigram.createArea(i, flag))
