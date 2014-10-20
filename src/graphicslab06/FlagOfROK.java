@@ -47,11 +47,11 @@ public class FlagOfROK extends Flag {
                 Math.PI + angle, -angle};
 
     private static final Area tao = new Area(largeCirc);
-    private static final Rectangle2D.Double bottomHalfCirc 
+    private static final Rectangle2D.Double bottomHalfCirc
             = new Rectangle2D.Double(-0.5, 0, 1, 0.5);
 
     private static final Area bagua = new Area();
-    
+
     static {
         tao.subtract(new Area(bottomHalfCirc));
         tao.add(new Area(smallCirc));
@@ -61,6 +61,7 @@ public class FlagOfROK extends Flag {
                     Area tg = buildBars(tgBars[i]);
                     placement.setToRotation(angles[i]);
                     placement.preConcatenate(AffineTransform.getTranslateInstance(1.5, 1));
+
                     return tg.createTransformedArea(placement);
                 }).forEach(bagua::add);
     }
@@ -80,24 +81,29 @@ public class FlagOfROK extends Flag {
 //        Area blackout = new Area(new Rectangle2D.Double(0, 0, GL6Util.getWidth(), GL6Util.getHeight()));
 //        blackout.subtract(new Area(flag));
         myCanvas.setColor(blue);
-        myCanvas.fill(largeCirc);
+        myCanvas.fill(blowUp.createTransformedShape(largeCirc));
         myCanvas.setColor(red);
-        myCanvas.fill(tao);
+        myCanvas.fill(tao.createTransformedArea(blowUp));
         myCanvas.setColor(Color.black);
-        myCanvas.fill(bagua);
+        myCanvas.fill(bagua.createTransformedArea(blowUp));
 //        myCanvas.fill(blackout);
         return myImage;
     }
 
     private static Area buildBars(boolean[] barPat) {
         Area bars = new Area();
-        Rectangle2D.Double trigramBar = new Rectangle2D.Double(0, 0, 1 / 12.0, 1 / 2.0);
+        Rectangle2D.Double trigramBar
+                = new Rectangle2D.Double(0, 0, 1 / 12.0, 1 / 2.0);
         Area trigramOne = new Area(trigramBar);
         Area trigramZero = new Area(trigramBar);
-        trigramZero.subtract(new Area(new Rectangle2D.Double(0, 11.0 / 48, 1.0 / 12, 1.0 / 24)));
+        trigramZero.subtract(new Area(
+                new Rectangle2D.Double(0, 11.0 / 48, 1.0 / 12, 1.0 / 24)));
         IntStream.range(0, barPat.length).mapToObj((int i) -> {
-            AffineTransform barShift = AffineTransform.getTranslateInstance(i / 8.0, 0);
-            return barPat[i] ? trigramOne.createTransformedArea(barShift) : trigramZero.createTransformedArea(barShift);
+            AffineTransform barShift = AffineTransform
+                    .getTranslateInstance(i / 8.0, 0);
+            return barPat[i]
+                    ? trigramOne.createTransformedArea(barShift)
+                    : trigramZero.createTransformedArea(barShift);
         }).forEach(bars::add);
         return bars;
     }
@@ -107,10 +113,6 @@ public class FlagOfROK extends Flag {
      * @author swalker
      */
 //    public static class ROKTrigram {
-//
-//        public static Area createArea(int index, Rectangle2D.Double flag) {
-//            return FlagOfROK.createArea(index, flag);
-//        }
 //
 //        private ROKTrigram(int index, Rectangle2D.Double flag) {
 //            super();
@@ -127,12 +129,7 @@ public class FlagOfROK extends Flag {
 //            this.trigram.transform(this.blowUp);
 //            this.trigram.transform(this.placement);
 //        }
-//
-//        private void buildBars(boolean[] barPat) {
-//            this.buildBars(barPat);
-//        }
 //    }
-
     public void drawFlag() {
         super.setImage(GL6Util.paintOnBG(flagOfROK()));
     }
