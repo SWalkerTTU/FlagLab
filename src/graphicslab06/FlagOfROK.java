@@ -40,13 +40,17 @@ public class FlagOfROK extends Flag {
         {false, true, false}};
     private static AffineTransform blowUp;
     private static final AffineTransform placement = new AffineTransform();
-    private static AffineTransform rotation;
+    private final static AffineTransform rotation
+            = AffineTransform.getRotateInstance(angle);
+    private final static AffineTransform centering
+            = AffineTransform.getTranslateInstance(1.5, 1);
     private static Area trigram = new Area();
     private static final double[] angles
             = new double[]{angle, Math.PI - angle,
                 Math.PI + angle, -angle};
 
     private static final Area tao = new Area(largeCirc);
+    private static final Area disc = new Area(largeCirc);
     private static final Rectangle2D.Double bottomHalfCirc
             = new Rectangle2D.Double(-0.5, 0, 1, 0.5);
 
@@ -56,12 +60,15 @@ public class FlagOfROK extends Flag {
         tao.subtract(new Area(bottomHalfCirc));
         tao.add(new Area(smallCirc));
         tao.subtract(new Area(yflip.createTransformedShape(smallCirc)));
+        tao.transform(rotation);
+        tao.transform(centering);
+        disc.transform(centering);
+        
         IntStream.range(0, tgBars.length)
                 .mapToObj((int i) -> {
                     Area tg = buildBars(tgBars[i]);
-                    placement.setToRotation(angles[i]);
-                    placement.preConcatenate(AffineTransform.getTranslateInstance(1.5, 1));
-
+                    placement.setToTranslation(17.0 / 12, 0.75);
+//                    placement.rotate(angles[i], 1.5, 1);
                     return tg.createTransformedArea(placement);
                 }).forEach(bagua::add);
     }
@@ -77,16 +84,13 @@ public class FlagOfROK extends Flag {
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-//        IntStream.range(0, 4).mapToObj((int i) -> ROKTrigram.createArea(i, flag)).forEach(bagua::add);
-//        Area blackout = new Area(new Rectangle2D.Double(0, 0, GL6Util.getWidth(), GL6Util.getHeight()));
-//        blackout.subtract(new Area(flag));
         myCanvas.setColor(blue);
-        myCanvas.fill(blowUp.createTransformedShape(largeCirc));
+        myCanvas.fill(disc.createTransformedArea(blowUp));
         myCanvas.setColor(red);
         myCanvas.fill(tao.createTransformedArea(blowUp));
         myCanvas.setColor(Color.black);
         myCanvas.fill(bagua.createTransformedArea(blowUp));
-//        myCanvas.fill(blackout);
+
         return myImage;
     }
 
