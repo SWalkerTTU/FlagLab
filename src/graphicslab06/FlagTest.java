@@ -40,10 +40,10 @@ public class FlagTest extends Applet {
         
         f = new FlagOfROK();
         
-        f.drawFlag();
-        g.drawImage(f.getImage(), 0, 0, this);
+//        f.drawFlag();
+//        g.drawImage(f.getImage(), 0, 0, this);
 
-//        f.displayFlag(g, 1);
+        f.displayFlag(g, 2);
 //        GL6Util.delay(5000);
 //        System.exit(0);
     }

@@ -38,7 +38,7 @@ public class Flag {
     public String getName(){
         return name;
     }
-    
+   
     public void displayFlag(Graphics g, int speed){
         drawFlag();
         GL6Util.speckleDraw(g, image, speed);

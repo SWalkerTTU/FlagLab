@@ -22,28 +22,28 @@ public class FlagOfUK extends Flag {
     private static final double flagRatio = 2.0;
 
     private static final double angle = Math.atan2(1, flagRatio);
+    private static AffineTransform blowUp;
 
     private static final Color blue = new Color(11135);
-    private static final Color red = new Color(13504806);
+    private static final AffineTransform ew = AffineTransform.getQuadrantRotateInstance(2, 30, 15);
 
-    private static AffineTransform blowUp;
     private static final AffineTransform nesw
             = AffineTransform.getRotateInstance(-angle, 30, 15);
+    private static final AffineTransform ns = AffineTransform.getQuadrantRotateInstance(1, 30, 15);
     private static final AffineTransform nwse
             = AffineTransform.getRotateInstance(angle, 30, 15);
-    private static final AffineTransform ew
-            = AffineTransform.getQuadrantRotateInstance(2, 30, 15);
-    private static final AffineTransform ns
-            = AffineTransform.getQuadrantRotateInstance(1, 30, 15);
+    private static final Color red
+            = new Color(13504806);
+    private static final Area redCross
+            = new Area();
 
+    private static final Area redSaltire = new Area();
+    private static final Area redStripe = new Area();
+    private static final Area saltire = new Area();
     private static final Area stripe = new Area(
             new Rectangle2D.Double(-5, 12, 70, 6));
-    private static final Area saltire = new Area();
-    private static final Area redStripe = new Area();
-    private static final Area redSaltire = new Area();
     private static final Area whiteCross = new Area(
             new Rectangle2D.Double(-5, 10, 70, 10));
-    private static final Area redCross = new Area();
 
     static {
         saltire.add(stripe.createTransformedArea(nesw));
@@ -83,6 +83,10 @@ public class FlagOfUK extends Flag {
         flagCanvas.fill(redCross.createTransformedArea(blowUp));
 
         return flagImage;
+    }
+
+    public FlagOfUK() {
+        super("United Kingdom", null);
     }
 
     @Override

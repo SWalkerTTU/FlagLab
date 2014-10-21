@@ -21,24 +21,23 @@ import java.util.stream.IntStream;
  */
 public class FlagOfUSA extends Flag {
 
-    private static final Area star = GL6Util.star;
-    private static final Area starField = new Area();
-
     private static AffineTransform blowUp;
 
-    private static final Color[] stripes = new Color[13];
-    private static final Color white = Color.white;
     private static final Color blue = new Color(3947374);
-    private static final Color red = new Color(11674164);
 
     private static final Rectangle2D.Double canton
             = new Rectangle2D.Double(0, 0, 0.76, 7.0 / 13.0);
-    private static final double starVSpace = 7.0 / 130.0;
-    private static final double starHSpace = 19.0 / 300.0;
+    private static final Color red = new Color(11674164);
+    private static final Area star = GL6Util.star;
     private static final double starDiam = 2.0 / 65.0;
+    private static final Area starField = new Area();
+    private static final double starHSpace = 19.0 / 300.0;
 
     private static final AffineTransform starScale = AffineTransform
             .getScaleInstance(starDiam, starDiam);
+    private static final double starVSpace = 7.0 / 130.0;
+    private static final Color[] stripes = new Color[13];
+    private static final Color white = Color.white;
 
     static {
         IntStream.range(0, stripes.length)
@@ -85,6 +84,10 @@ public class FlagOfUSA extends Flag {
         myCanvas.fill(blowUp.createTransformedShape(starField));
 
         return flagImage;
+    }
+
+    public FlagOfUSA() {
+        super("United States", null);
     }
 
     @Override
