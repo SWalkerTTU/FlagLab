@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 public class Flag {
     private final Color[] colors;
     private final String name;
-    private BufferedImage image;
+    protected BufferedImage image;
 
     public Flag() {
         colors = null;

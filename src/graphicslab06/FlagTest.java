@@ -38,12 +38,12 @@ public class FlagTest extends Applet {
             Logger.getLogger(FlagTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        f = new FlagOfROK();
+        f = new FlagOfUK();
         
-//        f.drawFlag();
-//        g.drawImage(f.getImage(), 0, 0, this);
+        f.drawFlag();
+        g.drawImage(f.getImage(), 0, 0, this);
 
-        f.displayFlag(g, 2);
+//        f.displayFlag(g, 1);
 //        GL6Util.delay(5000);
 //        System.exit(0);
     }

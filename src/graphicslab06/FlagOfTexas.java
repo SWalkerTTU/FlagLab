@@ -19,19 +19,23 @@ import java.awt.image.BufferedImage;
  */
 public class FlagOfTexas extends Flag {
 
+    private static final double flagRatio = 1.5;
+
     private static final Color blank = new Color(0, 0, 0, 0);
     private static final Color blue = new Color(10344);
-    private static final double flagRatio = 1.5;
     private static final Color red = new Color(12519984);
 
     private static final Area star = GL6Util.star;
 
+    private static BufferedImage overlay;
+    private static BufferedImage flagImage;
+
     private static BufferedImage draw() {
         Rectangle2D.Double flag = GL6Util.makeFlagBox(flagRatio);
-        BufferedImage myImage = GL6Util
+        flagImage = GL6Util
                 .drawBarsInBox(new Color[]{Color.white, red}, false, flag);
-        Graphics2D myCanvas = myImage.createGraphics();
-        BufferedImage overlay = GL6Util
+        Graphics2D myCanvas = flagImage.createGraphics();
+        overlay = GL6Util
                 .drawBarsInBox(new Color[]{blue, blank, blank}, true, flag);
         myCanvas.drawImage(overlay, null, 0, 0);
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -41,7 +45,7 @@ public class FlagOfTexas extends Flag {
                 .getTranslateInstance(flag.width / 6.0, flag.width / 3.0);
         txStar.scale(flag.width / 8, flag.width / 8);
         myCanvas.fill(star.createTransformedArea(txStar));
-        return myImage;
+        return flagImage;
     }
 
     public FlagOfTexas() {

@@ -396,55 +396,11 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfScotland() {
-        Color blue = new Color(26045);
-        BufferedImage myImage = drawBars(new Color[]{blue}, false);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        double angle = Math.atan2(getHeight(), getWidth());
-        double centerX = getWidth() / 2.0;
-        double centerY = getHeight() / 2.0;
-
-        AffineTransform nesw = AffineTransform
-                .getRotateInstance(angle, centerX, centerY);
-        AffineTransform nwse = AffineTransform
-                .getRotateInstance(-angle, centerX, centerY);
-        Area rect = new Area(new Rectangle2D.Double(centerX - getWidth() * 0.6,
-                centerY - getHeight() / 10.0, getWidth() * 1.2,
-                getHeight() / 5.0));
-        Area saltire = rect.createTransformedArea(nesw);
-        saltire.add(rect.createTransformedArea(nwse));
-
-        myCanvas.setColor(Color.white);
-        myCanvas.fill(saltire);
-        return myImage;
+        return FlagOfScotland.flagOfScotland();
     }
 
     static BufferedImage flagOfSuisse() {
-        BufferedImage myImage = drawBars(new Color[]{Color.BLACK}, true);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        double crossUnit = 5 * getHeight() / 160.0;
-        double centerX = getWidth() / 2.0;
-        double centerY = getHeight() / 2.0;
-
-        Rectangle2D.Double field = new Rectangle2D.Double(centerX - centerY, 0,
-                getHeight(), getHeight());
-        Rectangle2D.Double crossBar
-                = new Rectangle2D.Double(centerX - 3 * crossUnit,
-                        centerY - 10 * crossUnit, 6 * crossUnit,
-                        20 * crossUnit);
-
-        Area cross = new Area(crossBar);
-        cross.add(cross.createTransformedArea(AffineTransform
-                .getQuadrantRotateInstance(1, centerX, centerY)));
-
-        myCanvas.setColor(Color.red);
-        myCanvas.fill(field);
-        myCanvas.setColor(Color.white);
-        myCanvas.fill(cross);
-        return myImage;
+        return new FlagOfSuisse().getImage();
     }
 
     static BufferedImage flagOfTexas() {
