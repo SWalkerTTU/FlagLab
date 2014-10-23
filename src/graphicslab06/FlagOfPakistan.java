@@ -8,11 +8,12 @@ package graphicslab06;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 /**
  *
@@ -22,48 +23,51 @@ public class FlagOfPakistan extends UniqueFlagA {
 
     private static final Color green = new Color(26112);
 
+    private static final AffineTransform placement;
+    
     private static final Area leftField;
     private static final Area crescent;
+    private static final Area star = GL6Util.star;
+    private static final Area whiteZone;
+
+    private static final Ellipse2D.Double c1;
+    private static final Ellipse2D.Double c2;
     
     private static final Point2D.Double p1;
     private static final Point2D.Double p2;
     private static final Point2D.Double p3;
+    private static final Point2D.Double starCtr;
 
     static {
         double fr = 1.5;
         flagRatio = fr;
-
-        leftField = new Area(new Rectangle2D.Double(0, 0, 0.375, 1));
+        final double baseAngle = Math.atan2(1, 1.125);
+        angle = baseAngle;
         
         p1 = new Point2D.Double(15.0 / 16, 0.5);
-        p2 = new Point2D.Double();
-    }
-
-    protected static BufferedImage flagOfPakistan() {
-        double fieldWidth = 1.5;
-        Point2D.Double topLeft = new Point2D.Double(0, 0);
-        Point2D.Double bottomRight = new Point2D.Double(1.5, 1.0);
-        Point2D.Double ctr1 = new Point2D.Double(fieldWidth * 5 / 8, 1.0 / 2.0);
-        double rad1 = 0.3 * 1.0;
-        double c2locRad = 0.65 * 1.0;
-        Point2D.Double ctr2 = new Point2D.Double((2 * 1.5 - 3 * 1.0) / 4.0 + fieldWidth - c2locRad * 9 / Math.sqrt(145), c2locRad * 8 / Math.sqrt(145));
-        double rad2 = 0.275 * 1.0;
-        Area crescent = new Area(new Ellipse2D.Double(ctr1.x - rad1, ctr1.y - rad1, 2 * rad1, 2 * rad1));
-        crescent.subtract(new Area(new Ellipse2D.Double(ctr2.x - rad2, ctr2.y - rad2, 2 * rad2, 2 * rad2)));
+        p2 = new Point2D.Double(1.5 - 0.65 * Math.cos(baseAngle),
+                0.65 * Math.sin(baseAngle));
+        p3 = new Point2D.Double(p1.x + 0.3 * Math.cos(baseAngle),
+                p1.y - 0.3 * Math.sin(baseAngle));
+        starCtr = new Point2D.Double((p2.x + p3.x) / 2, (p2.y + p3.y) / 2);
         
+        c1 = new Ellipse2D.Double(p1.x - 0.3, p1.y - 0.3, 0.6, 0.6);
+        c2 = new Ellipse2D.Double(p2.x - 0.275, p2.y - 0.275, 0.55, 0.55);
         
-        myCanvas.setColor(green);
-        myCanvas.fill(new Rectangle2D.Double((2 * 1.5 - 3 * 1.0) / 4.0, 0, fieldWidth, 1.0));
-        myCanvas.setColor(Color.white);
-        myCanvas.fill(new Rectangle2D.Double((2 * 1.5 - 3 * 1.0) / 4.0, 0, fieldWidth / 4.0, 1.0));
-        myCanvas.fill(crescent);
-        Point2D.Double ctr3 = new Point2D.Double((2 * 1.5 - 3 * 1.0) / 4.0 + fieldWidth - 0.55 * 1.0 * 9 / Math.sqrt(145), 0.55 * 1.0 * 8 / Math.sqrt(145));
-        AffineTransform starLoc = new AffineTransform(0.1 * 1.0, 0, 0, 0.1 * 1.0, ctr3.x, ctr3.y);
-        starLoc.rotate(Math.atan2((2 * 1.5 - 3 * 1.0) / 4.0 + fieldWidth - ctr3.x, ctr3.y));
-        myCanvas.fill(starLoc.createTransformedShape(star));
-        myCanvas.setColor(Color.black);
-        myCanvas.fill(new Rectangle2D.Double(0, 0, (2 * 1.5 - 3 * 1.0) / 4.0, 1.0));
-        myCanvas.fill(new Rectangle2D.Double(1.5 - (2 * 1.5 - 3 * 1.0) / 4.0, 0, (2 * 1.5 - 3 * 1.0) / 4.0, 1.0));
+        placement = AffineTransform.getRotateInstance(Math.PI / 2 - baseAngle);
+        placement.preConcatenate(AffineTransform.getScaleInstance(0.1, 0.1));
+        placement.preConcatenate(AffineTransform
+                .getTranslateInstance(starCtr.x, starCtr.y));
+        
+        leftField = new Area(new Rectangle2D.Double(0, 0, 0.375, 1));
+        
+        crescent = new Area(c1);
+        crescent.subtract(new Area(c2));
+        
+        whiteZone = new Area();
+        whiteZone.add(leftField);
+        whiteZone.add(crescent);
+        whiteZone.add(star.createTransformedArea(placement));
     }
 
     public FlagOfPakistan() {
@@ -75,6 +79,11 @@ public class FlagOfPakistan extends UniqueFlagA {
         flagImage = GL6Util.drawBarsInBox(new Color[]{green}, true, flag);
         Graphics2D myCanvas = flagImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        blowUp = AffineTransform.getScaleInstance(flag.height, flag.height);
+        
+        myCanvas.setColor(Color.white);
+        myCanvas.fill(whiteZone.createTransformedArea(blowUp));
     }
 
 }
