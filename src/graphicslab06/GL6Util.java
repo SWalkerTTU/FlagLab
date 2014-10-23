@@ -4,14 +4,11 @@
  */
 package graphicslab06;
 
-//import gl6test.GraphicsLab06A;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -79,7 +76,8 @@ public class GL6Util {
     public static void showName(Graphics g, String name) {
         Graphics2D g2 = (Graphics2D) g;
         Font nameFont = new Font("Algerian", Font.BOLD, 48);
-        TextLayout layout = new TextLayout(name, nameFont, g2.getFontRenderContext());
+        TextLayout layout 
+                = new TextLayout(name, nameFont, g2.getFontRenderContext());
         Rectangle2D box = layout.getBounds();
 
         box.setRect(25, 50, box.getWidth() + 50, box.getHeight() + 30);
@@ -90,7 +88,7 @@ public class GL6Util {
 
         layout.draw(g2, 50.0f, (float) layout.getBounds().getHeight() + 65);
 
-        delay(2000);                      // Wait 2 second before showing next flag.
+        delay(2000); // Wait 2 second before showing next flag.
     }
 
     public static void speckleDraw(Graphics g, BufferedImage image, int speed) {
@@ -299,38 +297,7 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfPakistan() {
-        Color green = new Color(26112);
-        double flagUnit = getHeight() / 2.0;
-        Rectangle2D.Double flag = new Rectangle2D.Double(
-                getWidth() / 2.0 - 1.5 * flagUnit, 0,
-                3 * flagUnit, 2 * flagUnit);
-        BufferedImage myImage = drawBars(new Color[]{Color.black}, true);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        double hMargin = (2 * getWidth() - 3 * getHeight()) / 4.0;
-//        double fieldWidth = getWidth() - 2 * hMargin;
-//        Point2D.Double topLeft = new Point2D.Double(hMargin, 0);
-//        Point2D.Double bottomRight = new Point2D.Double(getWidth() - hMargin, getHeight());
-//        Point2D.Double ctr1 = new Point2D.Double(hMargin + fieldWidth * 5 / 8, getHeight() / 2.0);
-//        double rad1 = 0.3 * getHeight();
-//        double c2locRad = 0.65 * getHeight();
-//        Point2D.Double ctr2 = new Point2D.Double(hMargin + fieldWidth - c2locRad * 9 / Math.sqrt(145), c2locRad * 8 / Math.sqrt(145));
-//        double rad2 = 0.275 * getHeight();
-//        myCanvas.setColor(green);
-//        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth, getHeight()));
-//        myCanvas.setColor(Color.white);
-//        myCanvas.fill(new Rectangle2D.Double(hMargin, 0, fieldWidth / 4.0, getHeight()));
-//        Area crescent = new Area(new Ellipse2D.Double(ctr1.x - rad1, ctr1.y - rad1, 2 * rad1, 2 * rad1));
-//        crescent.subtract(new Area(new Ellipse2D.Double(ctr2.x - rad2, ctr2.y - rad2, 2 * rad2, 2 * rad2)));
-//        myCanvas.fill(crescent);
-//        Point2D.Double ctr3 = new Point2D.Double(hMargin + fieldWidth - 0.55 * getHeight() * 9 / Math.sqrt(145), 0.55 * getHeight() * 8 / Math.sqrt(145));
-//        AffineTransform starLoc = new AffineTransform(0.1 * getHeight(), 0, 0, 0.1 * getHeight(), ctr3.x, ctr3.y);
-//        starLoc.rotate(Math.atan2(hMargin + fieldWidth - ctr3.x, ctr3.y));
-//        myCanvas.fill(starLoc.createTransformedShape(star));
-//        myCanvas.setColor(Color.black);
-//        myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, getHeight()));
-//        myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, getHeight()));
-        return myImage;
+        return new FlagOfPakistan().getImage();
     }
 
     protected static BufferedImage flagOfROK() {
@@ -338,60 +305,7 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfRSA() {
-        Color green = new Color(31833);
-        Color red = new Color(14826792);
-        Color blue = new Color(793740);
-        Color gold = new Color(16561428);
-        BufferedImage myImage = drawBars(new Color[]{red, blue}, false);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-
-        double angle = Math.atan2(getHeight(), getWidth());
-        double centerX = getWidth() / 2.0;
-        double centerY = getHeight() / 2.0;
-
-        AffineTransform nw = AffineTransform
-                .getRotateInstance(Math.PI + angle, centerX, centerY);
-        AffineTransform sw = AffineTransform
-                .getRotateInstance(Math.PI - angle, centerX, centerY);
-
-        Area whiteBar = new Area(new Rectangle2D.Double(centerX,
-                centerY - getHeight() / 6.0, 0.6 * getWidth(),
-                getHeight() / 3.0));
-        Area whiteFimbre = new Area(whiteBar);
-        whiteFimbre.add(whiteBar.createTransformedArea(nw));
-        whiteFimbre.add(whiteBar.createTransformedArea(sw));
-
-        Area greenBar = new Area(new Rectangle2D.Double(centerX,
-                centerY - getHeight() / 10.0, 0.6 * getWidth(),
-                getHeight() / 5.0));
-        Area greenFimbre = new Area(greenBar);
-        greenFimbre.add(greenBar.createTransformedArea(nw));
-        greenFimbre.add(greenBar.createTransformedArea(sw));
-
-        Area goldTri = new Area(new Rectangle2D.Double(0, 0, getWidth(),
-                getHeight()));
-        goldTri.subtract(greenFimbre);
-        Path2D.Double bigTri = new Path2D.Double();
-        bigTri.moveTo(0, 0);
-        bigTri.lineTo(centerX, centerY);
-        bigTri.lineTo(0, getHeight());
-        bigTri.closePath();
-        goldTri.intersect(new Area(bigTri));
-
-        Area blackTri = new Area(goldTri);
-        blackTri.subtract(whiteFimbre);
-
-        myCanvas.setColor(Color.white);
-        myCanvas.fill(whiteFimbre);
-        myCanvas.setColor(green);
-        myCanvas.fill(greenFimbre);
-        myCanvas.setColor(gold);
-        myCanvas.fill(goldTri);
-        myCanvas.setColor(Color.black);
-        myCanvas.fill(blackTri);
-        return myImage;
+        return new FlagOfRSA().getImage();
     }
 
     protected static BufferedImage flagOfScotland() {
