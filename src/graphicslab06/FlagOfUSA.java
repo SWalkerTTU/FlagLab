@@ -12,7 +12,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.stream.IntStream;
 
 /**
@@ -22,35 +21,33 @@ import java.util.stream.IntStream;
 public class FlagOfUSA extends UniqueFlagA {
 
     private static final Color blue = new Color(3947374);
+    private static final Color red = new Color(11674164);
+    private static final Color white = Color.white;
+    private static final Color[] stripes = new Color[13];
 
     private static final Rectangle2D.Double canton
             = new Rectangle2D.Double(0, 0, 0.76, 7.0 / 13.0);
-    private static final Color red = new Color(11674164);
     private static final Area star = GL6Util.star;
-    private static final double starDiam = 2.0 / 65.0;
     private static final Area starField = new Area();
+
+    private static final double starDiam = 2.0 / 65.0;
     private static final double starHSpace = 19.0 / 300.0;
+    private static final double starVSpace = 7.0 / 130.0;
 
     private static final AffineTransform starScale;
-    private static final double starVSpace = 7.0 / 130.0;
-    private static final Color[] stripes = new Color[13];
-    private static final Color white = Color.white;
 
     static {
         flagRatio = 1.9;
         starScale = AffineTransform.getScaleInstance(starDiam, starDiam);
-        IntStream.range(0, stripes.length)
-                .filter((int i) -> i % 2 == 0)
+        IntStream.range(0, stripes.length).filter((int i) -> i % 2 == 0)
                 .forEach((int i) -> {
                     stripes[i] = red;
                 });
-        IntStream.range(0, stripes.length)
-                .filter((int i) -> i % 2 == 1)
+        IntStream.range(0, stripes.length).filter((int i) -> i % 2 == 1)
                 .forEach((int i) -> {
                     stripes[i] = white;
                 });
-        IntStream.range(0, 99)
-                .filter((int i) -> i % 2 == 0)
+        IntStream.range(0, 99).filter((int i) -> i % 2 == 0)
                 .mapToObj((int i) -> {
                     double hShift = (i % 11 + 1) * starHSpace;
                     double vShift = (i / 11 + 1) * starVSpace;
@@ -60,15 +57,18 @@ public class FlagOfUSA extends UniqueFlagA {
                     s = starScale.createTransformedShape(s);
                     s = xlate.createTransformedShape(s);
                     return new Area(s);
-                })
-                .forEach(starField::add);
+                }).forEach(starField::add);
+    }
+
+    public FlagOfUSA() {
+        super("United States");
     }
 
     @Override
-    protected void draw() {
-        myImage = GL6Util.drawBarsInBox(stripes, false, flag);
+    protected void draw(Rectangle2D.Double flag) {
+        flagImage = GL6Util.drawBarsInBox(stripes, false, flag);
 
-        Graphics2D myCanvas = myImage.createGraphics();
+        Graphics2D myCanvas = flagImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -80,14 +80,5 @@ public class FlagOfUSA extends UniqueFlagA {
         myCanvas.fill(blowUp.createTransformedShape(canton));
         myCanvas.setColor(white);
         myCanvas.fill(blowUp.createTransformedShape(starField));
-
-
     }
-
-    public FlagOfUSA() {
-        super("United States");
-    }
-
-
-
 }

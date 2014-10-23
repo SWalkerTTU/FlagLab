@@ -22,6 +22,7 @@ public class FlagOfSuisse extends UniqueFlagA {
     static final Area cross;
     
     static{
+        flagRatio = 1.0;
         cross = new Area(new Rectangle2D.Double(1 / 6.0, 0.4,
                 2.0 / 3, 0.2));
         AffineTransform ns = AffineTransform
@@ -29,13 +30,16 @@ public class FlagOfSuisse extends UniqueFlagA {
         cross.add(cross.createTransformedArea(ns));
     }
 
-    @Override
-    public void drawFlag() {
-        Rectangle2D.Double flag = GL6Util.makeFlagBox(flagRatio);
+    public FlagOfSuisse() {
+        super("Switzerland");
+    }
 
-        myImage = new BufferedImage((int) Math.round(flag.width),
+    @Override
+    public void draw(Rectangle2D.Double flag) {
+
+        flagImage = new BufferedImage((int) Math.round(flag.width),
                 (int) Math.round(flag.height), BufferedImage.TYPE_INT_RGB);
-        Graphics2D myCanvas = myImage.createGraphics();
+        Graphics2D myCanvas = flagImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         
@@ -46,10 +50,6 @@ public class FlagOfSuisse extends UniqueFlagA {
         myCanvas.setColor(Color.white);
         myCanvas.fill(cross.createTransformedArea(blowUp));
 
-        image = GL6Util.paintOnBG(myImage);
-    }
-
-    public FlagOfSuisse() {
-        super("Switzerland", 1);
+        image = GL6Util.paintOnBG(flagImage);
     }
 }

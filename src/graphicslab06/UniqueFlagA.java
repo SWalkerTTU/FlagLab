@@ -18,7 +18,7 @@ public abstract class UniqueFlagA extends Flag {
     protected static double angle;
     protected static AffineTransform blowUp;
 
-    protected BufferedImage myImage;
+    protected BufferedImage flagImage;
     protected Rectangle2D.Double flag;
 
     public UniqueFlagA(String n) {
@@ -29,7 +29,7 @@ public abstract class UniqueFlagA extends Flag {
     public void drawFlag(){
         flag = GL6Util.makeFlagBox(flagRatio);
         draw(flag);
-        image = GL6Util.paintOnBG(myImage);
+        image = GL6Util.paintOnBG(flagImage);
     }
     
     protected abstract void draw(Rectangle2D.Double flag);

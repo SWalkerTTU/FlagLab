@@ -32,7 +32,7 @@ public class Flag {
     }
 
     protected void drawFlag(){
-        image = GL6Util.nordicCross(colors);
+        image = GL6Util.drawBarFlag(new Color[]{Color.white}, true);
     }
     
     public String getName(){

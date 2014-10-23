@@ -51,7 +51,6 @@ public class GL6Util {
                 .map((AffineTransform at) -> at.createTransformedShape(tri))
                 .map(s -> new Area(s))
                 .forEach(star::add);
-
     }
 
     public static void delay(int ms) {
@@ -396,7 +395,7 @@ public class GL6Util {
     }
 
     protected static BufferedImage flagOfScotland() {
-        return FlagOfScotland.flagOfScotland();
+        return new FlagOfScotland().getImage();
     }
 
     static BufferedImage flagOfSuisse() {
@@ -424,18 +423,22 @@ public class GL6Util {
         return myImage;
     }
 
-
     static BufferedImage nordicCross(Color[] colors) {
-        final BufferedImage myImage = new BufferedImage(getWidth(), getHeight(),
-                BufferedImage.TYPE_INT_RGB);
+        Rectangle2D.Double rect = makeFlagBox(1.5);
+        final BufferedImage myImage 
+                = drawBarsInBox(new Color[]{colors[0]}, true, rect);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
-        myCanvas.setColor(colors[0]);
-        myCanvas.fillRect(0, 0, getWidth(), getHeight());
+        AffineTransform ns = AffineTransform
+                .getQuadrantRotateInstance(1, 0.375, 0.5);
+        AffineTransform blowUp = AffineTransform
+                .getScaleInstance(rect.height, rect.height);
+        Area bar = new Area(new Rectangle2D.Double(0, 0.4, 1.5, 0.2));
+        bar.add(bar.createTransformedArea(ns));
+        bar = bar.createTransformedArea(blowUp);
         myCanvas.setColor(colors[1]);
-        myCanvas.fill(new Rectangle2D.Float(3 * getWidth() / 8 - 0.1F * getHeight(), 0.0F, 0.2F * getHeight(), 1.0F * getHeight()));
-        myCanvas.fill(new Rectangle2D.Float(0.0F, 0.4F * getHeight(), 1.0F * getWidth(), 0.2F * getHeight()));
+        myCanvas.fill(bar);
         return myImage;
     }
 

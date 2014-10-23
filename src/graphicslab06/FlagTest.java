@@ -2,10 +2,6 @@ package graphicslab06;
 
 import java.applet.Applet;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-//import java.util.logging.Level;
-//import java.util.logging.Logger;
 
 /**
  *
@@ -24,21 +20,7 @@ public class FlagTest extends Applet {
         GL6Util.setWidth(this.getWidth());
         GL6Util.setHeight(this.getHeight());
 
-        Flag f = null;
-        f = new BarFlag("Test Pattern", GL6Util.tpGen(), true);
-
-        try {
-//            f = new FlagOfUSA();
-//            f = new UniqueFlag("China", "flagOfPRC");
-//            f = new UniqueFlag("ROK", "flagOfROK");
-//            f = new UniqueFlag("Texas", "flagOfTexas");
-            f = new UniqueFlag("UK", "flagOfUK");
-//            f = new UniqueFlag("USA", "flagOfUSA");
-        } catch (NoSuchMethodException ex) {
-            Logger.getLogger(FlagTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        f = new FlagOfUK();
+        Flag f = new FlagOfScotland();
         
         f.drawFlag();
         g.drawImage(f.getImage(), 0, 0, this);

@@ -17,9 +17,7 @@ import java.awt.image.BufferedImage;
  *
  * @author swalker
  */
-public class FlagOfTexas extends Flag {
-
-    private static final double flagRatio = 1.5;
+public class FlagOfTexas extends UniqueFlagA {
 
     private static final Color blank = new Color(0, 0, 0, 0);
     private static final Color blue = new Color(10344);
@@ -27,33 +25,34 @@ public class FlagOfTexas extends Flag {
 
     private static final Area star = GL6Util.star;
 
+    private static final AffineTransform txStarForm;
     private static BufferedImage overlay;
-    private static BufferedImage flagImage;
 
-    private static BufferedImage draw() {
-        Rectangle2D.Double flag = GL6Util.makeFlagBox(flagRatio);
+    static{
+        flagRatio = 1.5;
+        txStarForm = AffineTransform.getTranslateInstance(1 / 6.0, 1 / 3.0);
+        txStarForm.scale(1 / 8.0, 1 / 8.0);
+        
+    }
+    
+    
+    public FlagOfTexas() {
+        super("Texas");
+    }
+
+    @Override
+    public void draw(Rectangle2D.Double flag) {
         flagImage = GL6Util
                 .drawBarsInBox(new Color[]{Color.white, red}, false, flag);
         Graphics2D myCanvas = flagImage.createGraphics();
-        overlay = GL6Util
+        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);        overlay = GL6Util
                 .drawBarsInBox(new Color[]{blue, blank, blank}, true, flag);
         myCanvas.drawImage(overlay, null, 0, 0);
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
         myCanvas.setColor(Color.white);
         AffineTransform txStar = AffineTransform
                 .getTranslateInstance(flag.width / 6.0, flag.width / 3.0);
         txStar.scale(flag.width / 8, flag.width / 8);
         myCanvas.fill(star.createTransformedArea(txStar));
-        return flagImage;
-    }
-
-    public FlagOfTexas() {
-        super("Texas", null);
-    }
-
-    @Override
-    public void drawFlag() {
-        super.setImage(GL6Util.paintOnBG(draw()));
     }
 }

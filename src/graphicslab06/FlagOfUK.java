@@ -19,7 +19,6 @@ import java.awt.image.BufferedImage;
  */
 public class FlagOfUK extends UniqueFlagA {
 
-
     private static final Color blue = new Color(11135);
     private static final AffineTransform ew;
     private static final AffineTransform nesw;
@@ -38,11 +37,12 @@ public class FlagOfUK extends UniqueFlagA {
 
     static {
         flagRatio = 2.0;
-        angle = Math.atan2(1, flagRatio);
+        double baseAngle = Math.atan2(1, 2.0);
+        angle = baseAngle;
         ns = AffineTransform.getQuadrantRotateInstance(1, 30, 15);
         ew = AffineTransform.getQuadrantRotateInstance(2, 30, 15);
-        nesw = AffineTransform.getRotateInstance(-angle, 30, 15);
-        nwse = AffineTransform.getRotateInstance(angle, 30, 15);      
+        nesw = AffineTransform.getRotateInstance(-baseAngle, 30, 15);
+        nwse = AffineTransform.getRotateInstance(baseAngle, 30, 15);
         saltire.add(stripe.createTransformedArea(nesw));
         saltire.add(stripe.createTransformedArea(nwse));
         redStripe.add(new Area(new Rectangle2D.Double(30, 13, 35, 2)));
@@ -63,10 +63,10 @@ public class FlagOfUK extends UniqueFlagA {
         blowUp = AffineTransform
                 .getScaleInstance(flag.width / 60, flag.width / 60);
 
-        myImage = new BufferedImage(
+        flagImage = new BufferedImage(
                 (int) Math.round(flag.width),
                 (int) Math.round(flag.height), BufferedImage.TYPE_INT_RGB);
-        Graphics2D flagCanvas = myImage.createGraphics();
+        Graphics2D flagCanvas = flagImage.createGraphics();
         flagCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -79,6 +79,6 @@ public class FlagOfUK extends UniqueFlagA {
         flagCanvas.setColor(Color.white);
         flagCanvas.fill(whiteCross.createTransformedArea(blowUp));
         flagCanvas.setColor(red);
-        flagCanvas.fill(redCross.createTransformedArea(blowUp));        
+        flagCanvas.fill(redCross.createTransformedArea(blowUp));
     }
 }
