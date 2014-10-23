@@ -3,10 +3,6 @@ package graphicslab06;
 import java.applet.Applet;
 import java.awt.Graphics;
 
-/**
- *
- * @author scott.walker
- */
 public class FlagTest extends Applet {
 
     private static final long serialVersionUID = 1L;
@@ -20,7 +16,7 @@ public class FlagTest extends Applet {
         GL6Util.setWidth(this.getWidth());
         GL6Util.setHeight(this.getHeight());
 
-        Flag f = new FlagOfPakistan();
+        Flag f = new FlagOfPRC();
         
         f.drawFlag();
         g.drawImage(f.getImage(), 0, 0, this);

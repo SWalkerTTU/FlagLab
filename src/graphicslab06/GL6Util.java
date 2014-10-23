@@ -9,7 +9,6 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
@@ -28,8 +27,9 @@ import javax.swing.JOptionPane;
  */
 public class GL6Util {
 
-    private static int height;
     static final Area star = new Area();
+
+    private static int height;
     private static int width;
 
     static {
@@ -73,22 +73,9 @@ public class GL6Util {
         width = aWidth;
     }
 
-    public static void showName(Graphics g, String name) {
-        Graphics2D g2 = (Graphics2D) g;
-        Font nameFont = new Font("Algerian", Font.BOLD, 48);
-        TextLayout layout 
-                = new TextLayout(name, nameFont, g2.getFontRenderContext());
-        Rectangle2D box = layout.getBounds();
-
-        box.setRect(25, 50, box.getWidth() + 50, box.getHeight() + 30);
-        g2.setColor(Color.white);
-        g2.fill(box);
-        g2.setColor(Color.black);
-        g2.draw(box);
-
-        layout.draw(g2, 50.0f, (float) layout.getBounds().getHeight() + 65);
-
-        delay(2000); // Wait 2 second before showing next flag.
+    public static void showName(Graphics g, BufferedImage nameImage) {
+        g.drawImage(nameImage, 25, 50, null);
+        delay(2000);
     }
 
     public static void speckleDraw(Graphics g, BufferedImage image, int speed) {
@@ -136,6 +123,7 @@ public class GL6Util {
             BufferedImage smallBox = draw.getSubimage(x, y, boxSize, boxSize);
             g2.drawImage(smallBox, null, x, y);
         }
+
     }
 
     public static void titlePage(Graphics g, String name, int period) {
@@ -264,52 +252,29 @@ public class GL6Util {
         return myImage;
     }
 
-    protected static BufferedImage flagOfPRC() {
-        BufferedImage myImage = drawBars(new Color[]{Color.red}, false);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        double hMargin = (2 * getWidth() - 3 * getHeight()) / 4.0;
-        double gridUnit = getHeight() / 20.0;
-        Point2D.Double bigCenter = new Point2D.Double(getHeight() / 4.0 + hMargin, getHeight() / 4.0);
-        AffineTransform scale
-                = new AffineTransform(3 * gridUnit, 0, 0, 3 * gridUnit, bigCenter.x, bigCenter.y);
-        myCanvas.setColor(Color.yellow);
-        myCanvas.fill(scale.createTransformedShape(star));
-        double[] littleCtrXs = new double[]{10, 12, 12, 10};
-        double[] littleCtrYs = new double[]{2, 4, 7, 9};
-        IntStream.range(0, littleCtrXs.length)
-                .mapToObj((int i)
-                        -> new Point2D.Double(
-                                littleCtrXs[i] * gridUnit + hMargin,
-                                littleCtrYs[i] * gridUnit))
-                .map((Point2D.Double p2d) -> {
-                    scale.setTransform(gridUnit, 0, 0, gridUnit, p2d.x, p2d.y);
-                    double theta = Math.atan2(bigCenter.x - p2d.x,
-                            p2d.y - bigCenter.y);
-                    scale.rotate(theta);
-                    return scale.createTransformedShape(star);
-                })
-                .forEach(myCanvas::fill);
-        myCanvas.setColor(Color.black);
-        myCanvas.fill(new Rectangle2D.Double(0, 0, hMargin, getHeight()));
-        myCanvas.fill(new Rectangle2D.Double(getWidth() - hMargin, 0, hMargin, getHeight()));
-        return myImage;
+    static BufferedImage flagOfPRC() {
+        return new FlagOfPRC().getImage();
     }
 
-    protected static BufferedImage flagOfPakistan() {
+    static BufferedImage flagOfPakistan() {
         return new FlagOfPakistan().getImage();
     }
 
-    protected static BufferedImage flagOfROK() {
+    static BufferedImage flagOfROK() {
         return new FlagOfROK().getImage();
     }
 
-    protected static BufferedImage flagOfRSA() {
+    static BufferedImage flagOfRSA() {
         return new FlagOfRSA().getImage();
     }
 
-    protected static BufferedImage flagOfScotland() {
+    static BufferedImage flagOfScotland() {
         return new FlagOfScotland().getImage();
+    }
+
+    static BufferedImage imageBase(Rectangle2D.Double flag) {
+        return new BufferedImage((int) Math.round(flag.width),
+                (int) Math.round(flag.height), BufferedImage.TYPE_INT_RGB);
     }
 
     static BufferedImage flagOfSuisse() {
@@ -339,7 +304,7 @@ public class GL6Util {
 
     static BufferedImage nordicCross(Color[] colors) {
         Rectangle2D.Double rect = makeFlagBox(1.5);
-        final BufferedImage myImage 
+        final BufferedImage myImage
                 = drawBarsInBox(new Color[]{colors[0]}, true, rect);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -387,4 +352,7 @@ public class GL6Util {
         return paintOnBG(img);
     }
 
+    static Area getFlagBase(double flagRatio){
+        return new Area(new Rectangle2D.Double(0, 0, flagRatio, 1));
+    }
 }

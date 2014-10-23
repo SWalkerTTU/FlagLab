@@ -1,20 +1,14 @@
 package graphicslab06;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.stream.IntStream;
 
-/**
- *
- * @author swalker
- */
 public class FlagOfROK extends UniqueFlagA {
 
     private static final Color blue = new Color(13432);
@@ -25,6 +19,8 @@ public class FlagOfROK extends UniqueFlagA {
     private static final Area bagua = new Area();
     private static final Area disc;
     private static final Area tao;
+    private static final Area flagBase;
+    
     private static final Shape largeCirc;
     private static final Shape smallCirc;
     private static final Shape bottomHalfCirc;
@@ -42,22 +38,21 @@ public class FlagOfROK extends UniqueFlagA {
         {false, true, false}};
 
     static {
-        double fr = 1.5;
-        flagRatio = fr;
-        double baseAngle = Math.atan2(1, fr);
-        angle = baseAngle;
+        setFlagRatio(1.5);
+        setAngle(Math.atan2(1, getFlagRatio()));
+        flagBase = GL6Util.getFlagBase(getFlagRatio());
+                
+        angles = new double[]{getAngle(), Math.PI - getAngle(),
+            Math.PI + getAngle(), -getAngle()};
 
-        angles = new double[]{baseAngle, Math.PI - baseAngle,
-            Math.PI + baseAngle, -baseAngle};
-
-        rotation = AffineTransform.getRotateInstance(baseAngle);
-        centering = AffineTransform.getTranslateInstance(1.5, 1);
-        tgWide = AffineTransform.getTranslateInstance(11.0 / 12, -0.25);
+        rotation = AffineTransform.getRotateInstance(getAngle());
+        centering = AffineTransform.getTranslateInstance(0.75, 0.5);
+        tgWide = AffineTransform.getTranslateInstance(11.0 / 24, -0.125);
         yflip = AffineTransform.getScaleInstance(-1, 1);
 
-        largeCirc = new Ellipse2D.Double(-0.5, -0.5, 1, 1);
-        smallCirc = new Ellipse2D.Double(-0.5, -0.25, 0.5, 0.5);
-        bottomHalfCirc = new Rectangle2D.Double(-0.5, 0, 1, 0.5);
+        largeCirc = new Ellipse2D.Double(-0.25, -0.25, 0.5, 0.5);
+        smallCirc = new Ellipse2D.Double(-0.25, -0.125, 0.25, 0.25);
+        bottomHalfCirc = new Rectangle2D.Double(-0.25, 0, 0.5, 0.25);
 
         disc = new Area(largeCirc);
 
@@ -71,26 +66,32 @@ public class FlagOfROK extends UniqueFlagA {
 
         IntStream.range(0, tgBars.length)
                 .mapToObj((int i) -> {
-                    placement.setToRotation(angles[i], 1.5, 1);
+                    placement.setToRotation(angles[i], 0.75, 0.5);
                     Area tg = buildBars(tgBars[i]);
                     tg.transform(centering);
                     tg.transform(tgWide);
                     tg.transform(placement);
                     return tg;
                 }).forEach(bagua::add);
+        
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase,
+                Color.white));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(disc, blue));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(tao, red));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(bagua, Color.black));
     }
 
     private static Area buildBars(boolean[] barPat) {
         Area bars = new Area();
         Rectangle2D.Double trigramBar
-                = new Rectangle2D.Double(0, 0, 1 / 12.0, 1 / 2.0);
+                = new Rectangle2D.Double(0, 0, 1 / 24.0, 1 / 4.0);
         Area trigramOne = new Area(trigramBar);
         Area trigramZero = new Area(trigramBar);
         trigramZero.subtract(new Area(
-                new Rectangle2D.Double(0, 11.0 / 48, 1.0 / 12, 1.0 / 24)));
+                new Rectangle2D.Double(0, 11.0 / 96, 1.0 / 24, 1.0 / 48)));
         IntStream.range(0, barPat.length).mapToObj((int i) -> {
             AffineTransform barShift = AffineTransform
-                    .getTranslateInstance(i / 8.0, 0);
+                    .getTranslateInstance(i / 16.0, 0);
             return barPat[i]
                     ? trigramOne.createTransformedArea(barShift)
                     : trigramZero.createTransformedArea(barShift);
@@ -100,24 +101,5 @@ public class FlagOfROK extends UniqueFlagA {
 
     public FlagOfROK() {
         super("South Korea");
-    }
-
-    @Override
-    protected void draw(Rectangle2D.Double flag) {
-        blowUp = AffineTransform.getScaleInstance(flag.height / 2.0,
-                flag.height / 2.0);
-
-        flagImage = GL6Util.drawBarsInBox(new Color[]{Color.white}, false, flag);
-        Graphics2D myCanvas = flagImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-
-        myCanvas.setColor(blue);
-        myCanvas.fill(disc.createTransformedArea(blowUp));
-        myCanvas.setColor(red);
-        myCanvas.fill(tao.createTransformedArea(blowUp));
-        myCanvas.setColor(Color.black);
-        myCanvas.fill(bagua.createTransformedArea(blowUp));
-
     }
 }
