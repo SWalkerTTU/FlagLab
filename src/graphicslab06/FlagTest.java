@@ -16,7 +16,7 @@ public class FlagTest extends Applet {
         GL6Util.setWidth(this.getWidth());
         GL6Util.setHeight(this.getHeight());
 
-        Flag f = new FlagOfPRC();
+        Flag f = new FlagOfCanada();
         
         f.drawFlag();
         g.drawImage(f.getImage(), 0, 0, this);

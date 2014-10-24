@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package graphicslab06;
 
 import java.awt.Color;
@@ -21,33 +17,15 @@ import java.util.Random;
 import java.util.stream.IntStream;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author scott.walker
- */
 public class GL6Util {
 
-    static final Area star = new Area();
 
     private static int height;
     private static int width;
+    static final Area star = new Area();
 
     static {
-        final double ratio = (3 - Math.sqrt(5)) / 2.0;
-        final double angle = 2 * Math.PI / 5;
-        Path2D.Double tri = new Path2D.Double();
-        tri.moveTo(Math.cos(Math.PI / 2), Math.sin(-Math.PI / 2));
-        tri.lineTo(Math.cos(Math.PI / 10) * ratio,
-                Math.sin(Math.PI / 10) * ratio);
-        tri.lineTo(-Math.cos(Math.PI / 10) * ratio,
-                Math.sin(Math.PI / 10) * ratio);
-        tri.closePath();
-        IntStream.range(0, 5)
-                .mapToObj((int i)
-                        -> AffineTransform.getRotateInstance(i * angle))
-                .map((AffineTransform at) -> at.createTransformedShape(tri))
-                .map(s -> new Area(s))
-                .forEach(star::add);
+        buildStar();
     }
 
     public static void delay(int ms) {
@@ -142,10 +120,22 @@ public class GL6Util {
         GL6Util.delay(3000);
     }
 
-    protected static Path2D.Float buildMapleLeaf() {
-        float radius = 1;
-        Path2D.Float newPath = new Path2D.Float(new Ellipse2D.Float(-radius, radius, 2 * radius, 2 * radius));
-        return newPath;
+    private static void buildStar() {
+        final double ratio = (3 - Math.sqrt(5)) / 2.0;
+        final double angle = 2 * Math.PI / 5;
+        Path2D.Double tri = new Path2D.Double();
+        tri.moveTo(Math.cos(Math.PI / 2), Math.sin(-Math.PI / 2));
+        tri.lineTo(Math.cos(Math.PI / 10) * ratio,
+                Math.sin(Math.PI / 10) * ratio);
+        tri.lineTo(-Math.cos(Math.PI / 10) * ratio,
+                Math.sin(Math.PI / 10) * ratio);
+        tri.closePath();
+        IntStream.range(0, 5)
+                .mapToObj((int i)
+                        -> AffineTransform.getRotateInstance(i * angle))
+                .map((AffineTransform at) -> at.createTransformedShape(tri))
+                .map(s -> new Area(s))
+                .forEach(star::add);
     }
 
     protected static BufferedImage drawBars(Color[] colors, boolean isVertical) {
@@ -194,7 +184,13 @@ public class GL6Util {
         return temp;
     }
 
-    protected static BufferedImage flagOfBrazil() {
+    static BufferedImage drawBarFlag(Color[] colors, boolean vertical) {
+        Rectangle2D.Double rect = makeFlagBox(1.5);
+        BufferedImage img = drawBarsInBox(colors, vertical, rect);
+        return paintOnBG(img);
+    }
+
+    static BufferedImage flagOfBrazil() {
         BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D myCanvas = myImage.createGraphics();
         myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -222,34 +218,14 @@ public class GL6Util {
         return myImage;
     }
 
-    protected static BufferedImage flagOfCanada() {
-        Color[] base = new Color[]{Color.red, Color.white, Color.white, Color.red};
-        BufferedImage myImage = drawBars(base, true);
-        int imgW = myImage.getWidth();
-        int imgH = myImage.getHeight();
-        int blackBarHeight = (2 * imgH - imgW) / 4;
-        Path2D.Float mapleLeaf;
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setColor(Color.black);
-        myCanvas.fillRect(0, 0, imgW, blackBarHeight);
-        myCanvas.fillRect(0, imgH - blackBarHeight, imgW, blackBarHeight);
-        myCanvas.setColor(Color.red);
-        mapleLeaf = buildMapleLeaf();
-        AffineTransform mlXform = new AffineTransform();
-        mlXform.setTransform(mlXform);
-        return myImage;
+    @Deprecated
+    static BufferedImage flagOfCanada() {
+        return new FlagOfCanada().getImage();
     }
 
-    protected static BufferedImage flagOfJapan() {
-        BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        myCanvas.setColor(Color.white);
-        myCanvas.fillRect(0, 0, getWidth(), getHeight());
-        myCanvas.setColor(new Color(16711705));
-        myCanvas.fill(new Ellipse2D.Float(getWidth() / 2 - 0.3F * getHeight(),
-                0.2F * getHeight(), 0.6F * getHeight(), 0.6F * getHeight()));
-        return myImage;
+    @Deprecated
+    static BufferedImage flagOfJapan() {
+        return new FlagOfJapan().getImage();
     }
 
     static BufferedImage flagOfPRC() {
@@ -272,11 +248,6 @@ public class GL6Util {
         return new FlagOfScotland().getImage();
     }
 
-    static BufferedImage imageBase(Rectangle2D.Double flag) {
-        return new BufferedImage((int) Math.round(flag.width),
-                (int) Math.round(flag.height), BufferedImage.TYPE_INT_RGB);
-    }
-
     static BufferedImage flagOfSuisse() {
         return new FlagOfSuisse().getImage();
     }
@@ -293,13 +264,29 @@ public class GL6Util {
         return new FlagOfUSA().getImage();
     }
 
-    static BufferedImage paintOnBG(BufferedImage flagImage) {
-        BufferedImage myImage = drawBars(new Color[]{Color.BLACK}, true);
-        Graphics2D myCanvas = myImage.createGraphics();
-        int x = (int) Math.round((getWidth() - flagImage.getWidth()) / 2.0);
-        int y = (int) Math.round((getHeight() - flagImage.getHeight()) / 2.0);
-        myCanvas.drawImage(flagImage, null, x, y);
-        return myImage;
+    static Area getFlagBase(double flagRatio) {
+        return new Area(new Rectangle2D.Double(0, 0, flagRatio, 1));
+    }
+
+    static BufferedImage imageBase(Rectangle2D.Double flag) {
+        return new BufferedImage((int) Math.round(flag.width),
+                (int) Math.round(flag.height), BufferedImage.TYPE_INT_RGB);
+    }
+
+    static Rectangle2D.Double makeFlagBox(double flagRatio) {
+        double screenRatio = getWidth() / (double) getHeight();
+        double flagWidth = getWidth(),
+                flagHeight = getHeight();
+        
+        if (flagRatio > screenRatio) {
+            flagHeight = getWidth() / flagRatio;
+        } else {
+            if (flagRatio < screenRatio) {
+                flagWidth = flagRatio * getHeight();
+            }
+        }
+        return new Rectangle2D.Double(0, 0,
+                flagWidth, flagHeight);
     }
 
     static BufferedImage nordicCross(Color[] colors) {
@@ -321,38 +308,21 @@ public class GL6Util {
         return myImage;
     }
 
-    static Color[] tpGen() {
+    static BufferedImage paintOnBG(BufferedImage flagImage) {
+        BufferedImage myImage = drawBars(new Color[]{Color.BLACK}, true);
+        Graphics2D myCanvas = myImage.createGraphics();
+        int x = (int) Math.round((getWidth() - flagImage.getWidth()) / 2.0);
+        int y = (int) Math.round((getHeight() - flagImage.getHeight()) / 2.0);
+        myCanvas.drawImage(flagImage, null, x, y);
+        return myImage;
+    }
+
+    static Color[] tpGen(){
         float[] r = new float[]{0.6F, 1, 0, 0, 1, 1, 0};
         float[] g = new float[]{0.6F, 1, 1, 1, 0, 0, 0};
         float[] b = new float[]{0.6F, 0, 1, 0, 1, 0, 1};
         return IntStream.range(0, r.length)
                 .mapToObj((int i) -> new Color(r[i], g[i], b[i]))
                 .toArray(Color[]::new);
-    }
-
-    static Rectangle2D.Double makeFlagBox(double flagRatio) {
-        double screenRatio = getWidth() / (double) getHeight();
-        double flagWidth = getWidth(),
-                flagHeight = getHeight();
-
-        if (flagRatio > screenRatio) {
-            flagHeight = getWidth() / flagRatio;
-        } else {
-            if (flagRatio < screenRatio) {
-                flagWidth = flagRatio * getHeight();
-            }
-        }
-        return new Rectangle2D.Double(0, 0,
-                flagWidth, flagHeight);
-    }
-
-    static BufferedImage drawBarFlag(Color[] colors, boolean vertical) {
-        Rectangle2D.Double rect = makeFlagBox(1.5);
-        BufferedImage img = drawBarsInBox(colors, vertical, rect);
-        return paintOnBG(img);
-    }
-
-    static Area getFlagBase(double flagRatio){
-        return new Area(new Rectangle2D.Double(0, 0, flagRatio, 1));
     }
 }

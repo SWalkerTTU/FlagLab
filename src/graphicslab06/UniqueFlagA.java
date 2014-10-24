@@ -22,8 +22,6 @@ import java.util.HashMap;
 public abstract class UniqueFlagA extends Flag {
 
     private static double angle;
-    private static ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> areas
-            = new ArrayList<>();
     private static AffineTransform blowUp;
     private static double flagRatio;
 
@@ -33,14 +31,6 @@ public abstract class UniqueFlagA extends Flag {
 
     static void setAngle(double aAngle) {
         angle = aAngle;
-    }
-
-    static ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> getAreas() {
-        return areas;
-    }
-
-    static void setAreas(ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> aAreas) {
-        areas = aAreas;
     }
 
     static AffineTransform getBlowUp() {
@@ -74,7 +64,7 @@ public abstract class UniqueFlagA extends Flag {
         canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         blowUp = AffineTransform.getScaleInstance(flag.height, flag.height);
-        areas.stream()
+        getAreas().stream()
                 .forEachOrdered(aMap -> {
                     canvas.setColor(aMap.getValue());
                     canvas.fill(aMap.getKey().createTransformedArea(blowUp));

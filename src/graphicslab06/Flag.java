@@ -11,14 +11,19 @@ import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
  * @author scott.walker
  */
 public class Flag {
+    private static ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> areas
+            = new ArrayList<>();
 
     public static BufferedImage nameDraw(String name) {
         Font nameFont = new Font("Algerian", Font.BOLD, 48);
@@ -39,6 +44,20 @@ public class Flag {
         myCanvas.draw(textBox);
         layout.draw(myCanvas, 25, (float) textBox.getHeight() - 15);
         return nameImage;
+    }
+
+    /**
+     * @return the areas
+     */
+    static ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> getAreas() {
+        return areas;
+    }
+
+    /**
+     * @param aAreas the areas to set
+     */
+    static void setAreas(ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> aAreas) {
+        areas = aAreas;
     }
 
     private final Color[] colors;
