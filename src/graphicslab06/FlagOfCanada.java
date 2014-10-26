@@ -14,11 +14,12 @@ public class FlagOfCanada extends UniqueFlag {
 
     private static final AffineTransform centering
             = AffineTransform.getTranslateInstance(1, 0.5);
+    private static final double flagRatioCA;
 
     static {
-        setFlagRatio(2.0);
-
-        flagBase = getFlagBase(getFlagRatio());
+        flagRatioCA = 2;
+        
+        flagBase = getFlagBase(flagRatioCA);
         redZone = new Area();
         redZone.add(new Area(new Rectangle2D.Double(0, 0, 0.5, 1)));
         redZone.add(new Area(new Rectangle2D.Double(1.5, 0, 0.5, 1)));
@@ -38,4 +39,8 @@ public class FlagOfCanada extends UniqueFlag {
         getAreas().add(new HashMap.SimpleImmutableEntry<>(redZone, Color.red));
     }
 
+    @Override
+    public double getFlagRatio() {
+        return flagRatioCA;
+    }
 }

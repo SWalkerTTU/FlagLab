@@ -14,13 +14,13 @@ public class FlagOfScotland extends UniqueFlag {
     private static final Area rect;
     private static final Area saltire;
     private static final Area flagBase;
+    private static final double flagRatioSCO = 1.25;
 
     static {
-        setFlagRatio(1.25);
         double angle = Math.atan2(1, 1.3);
         nesw = AffineTransform.getRotateInstance(-angle, 0.625, 0.5);
         nwse = AffineTransform.getRotateInstance(angle, 0.625, 0.5);
-        flagBase = getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(flagRatioSCO);
         double barWidth
                 = 1 / 6.0 * (Math.sin(angle) + Math.cos(angle));
 
@@ -35,5 +35,10 @@ public class FlagOfScotland extends UniqueFlag {
         getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase, blue));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(saltire,
                 Color.white));
+    }
+    
+    @Override
+    public double getFlagRatio(){
+        return flagRatioSCO;
     }
 }

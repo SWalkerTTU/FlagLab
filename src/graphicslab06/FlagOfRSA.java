@@ -30,8 +30,7 @@ public class FlagOfRSA extends UniqueFlag {
     private static final Path2D.Double bigTri = new Path2D.Double();
 
     static {
-        setFlagRatio(1.5);
-        double angle = Math.atan2(1, getFlagRatio());
+        double angle = Math.atan2(1, flagRatio);
 
         centering = AffineTransform.getTranslateInstance(0.75, 0.5);
         nw = AffineTransform.getRotateInstance(Math.PI + angle);
@@ -60,9 +59,8 @@ public class FlagOfRSA extends UniqueFlag {
         blackTri = new Area(goldTri);
         blackTri.subtract(whiteFimbre);
 
-        flagBase = getFlagBase(getFlagRatio());
-        bottomHalf = new Area(new Rectangle2D.Double(0, 0.5,
-                getFlagRatio(), 0.5));
+        flagBase = getFlagBase(flagRatio);
+        bottomHalf = new Area(new Rectangle2D.Double(0, 0.5, flagRatio, 0.5));
     }
 
     public FlagOfRSA() {

@@ -48,10 +48,12 @@ public class FlagOfBrazil extends UniqueFlag {
     private static final double letterH = 0.3 * module;
 
     private static final double radius4 = (radius1 + radius2 + letterH) / 2;
+    private static final double flagRatioBR;
+    
     
     static {
-        setFlagRatio(10.0 / 7);
-        flagBase = getFlagBase(getFlagRatio());
+        flagRatioBR = 10.0 / 7;
+        flagBase = getFlagBase(flagRatioBR);
 
         buildDiamond();
         buildSky();
@@ -180,6 +182,11 @@ public class FlagOfBrazil extends UniqueFlag {
         getAreas().add(new HashMap.SimpleImmutableEntry<>(globe, blue));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(band, white));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(motto, green));
+    }
+
+    @Override
+    public double getFlagRatio() {
+        return flagRatioBR;
     }
 
     private static enum BrazilStars {

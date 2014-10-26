@@ -13,8 +13,7 @@ public class FlagOfJapan extends UniqueFlag {
     private static final Area redSun;
 
     static {
-        setFlagRatio(1.5);
-        flagBase = getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(flagRatio);
         redSun = new Area(new Ellipse2D.Double(0.45, 0.2, 0.6, 0.6));
     }
 

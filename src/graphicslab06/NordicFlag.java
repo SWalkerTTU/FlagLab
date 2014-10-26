@@ -12,8 +12,7 @@ public class NordicFlag extends Flag {
     private static final Area cross = new Area();
 
     static {
-        setFlagRatio(1.5);
-        flagBase.add(new Area(GL6Util.makeFlagBox(getFlagRatio())));
+        flagBase.add(getFlagBase(flagRatio));
         cross.add(new Area(new Rectangle2D.Double(-1.5, 0.4, 3, 0.2)));
 
         AffineTransform ns = AffineTransform

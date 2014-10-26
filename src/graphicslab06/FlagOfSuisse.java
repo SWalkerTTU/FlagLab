@@ -10,10 +10,10 @@ public class FlagOfSuisse extends UniqueFlag {
 
     private static final Area cross;
     private static final Area flagBase;
+    private static final double flagRatioCH = 1;
 
     static {
-        setFlagRatio(1.0);
-        flagBase = getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(flagRatioCH);
         cross = new Area(new Rectangle2D.Double(1 / 6.0, 0.4,
                 2.0 / 3, 0.2));
         AffineTransform ns = AffineTransform
@@ -25,5 +25,10 @@ public class FlagOfSuisse extends UniqueFlag {
         super("Switzerland");
         getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase, Color.red));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(cross, Color.white));
+    }
+
+    @Override
+    public double getFlagRatio() {
+        return flagRatioCH;
     }
 }

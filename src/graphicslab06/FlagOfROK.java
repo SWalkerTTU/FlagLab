@@ -38,9 +38,8 @@ public class FlagOfROK extends UniqueFlag {
         {false, true, false}};
 
     static {
-        setFlagRatio(1.5);
-        double angle = (Math.atan2(1, getFlagRatio()));
-        flagBase = getFlagBase(getFlagRatio());
+        double angle = Math.atan2(1, flagRatio);
+        flagBase = getFlagBase(flagRatio);
 
         angles = new double[]{angle, Math.PI - angle,
             Math.PI + angle, -angle};

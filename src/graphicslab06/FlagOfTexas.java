@@ -21,11 +21,10 @@ public class FlagOfTexas extends UniqueFlag {
     private static final AffineTransform txStarForm;
 
     static {
-        setFlagRatio(1.5);
         txStarForm = AffineTransform.getTranslateInstance(1 / 4.0, 1 / 2.0);
         txStarForm.scale(0.1875, 0.1875);
 
-        flagBase = getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(flagRatio);
         bottomHalf = new Area(new Rectangle2D.Double(0, 0.5, 1.5, 0.5));
         field = new Area(new Rectangle2D.Double(0, 0, 0.5, 1));
         txStar = star.createTransformedArea(txStarForm);

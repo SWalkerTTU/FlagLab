@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class GraphicsLab06A extends Applet {
 
-    private static final int speed = 1;
+    private static int speed = 1;
     protected static final int width = 1000;
     protected static final int height = 650;
 
@@ -23,10 +23,16 @@ public class GraphicsLab06A extends Applet {
         this.setMaximumSize(new Dimension(width, height));
         this.setMinimumSize(new Dimension(width, height));
         try {
-//        speed = GL6Util.enterIntGUI("How fast is your computer? \n 1 = Really Slow \n 2 = Normal Speed \n 3 = Really Fast \n 4 = Ultra Fast");
+            speed = GL6Util.enterIntGUI(
+                    "How fast is your computer?\n"
+                    + "1 = Really Slow\n"
+                    + "2 = Normal Speed\n"
+                    + "3 = Really Fast\n"
+                    + "4 = Ultra Fast");
             flags = FileOps.readFlagFile();
         } catch (IOException ex) {
-            Logger.getLogger(GraphicsLab06A.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GraphicsLab06A.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
     }
 

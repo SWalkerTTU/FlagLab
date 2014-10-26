@@ -27,14 +27,14 @@ public class FlagOfUK extends UniqueFlag {
     private static final Color white = Color.white;
     private static final Area whiteCross = new Area(
             new Rectangle2D.Double(-0.2, 1 / 3.0, 2.4, 1 / 3.0));
+    private static final double flagRatioUK = 2;
 
     static {
-        setFlagRatio(2.0);
-        double angle = Math.atan2(1, getFlagRatio());
-        flagBase = getFlagBase(getFlagRatio());
+        double angle = Math.atan2(1, flagRatioUK);
+        flagBase = getFlagBase(flagRatioUK);
         ns = AffineTransform.getQuadrantRotateInstance(1, 1, 0.5);
         ew = AffineTransform.getQuadrantRotateInstance(2, 1, 0.5);
-        nesw = AffineTransform.getRotateInstance(angle, 1, 0.5);
+        nesw = AffineTransform.getRotateInstance(-angle, 1, 0.5);
         nwse = AffineTransform.getRotateInstance(angle, 1, 0.5);
         saltire.add(stripe.createTransformedArea(nesw));
         saltire.add(stripe.createTransformedArea(nwse));
@@ -54,5 +54,10 @@ public class FlagOfUK extends UniqueFlag {
         getAreas().add(new HashMap.SimpleImmutableEntry<>(redSaltire, red));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(whiteCross, white));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(redCross, red));
+    }
+
+    @Override
+    public double getFlagRatio() {
+        return flagRatioUK;
     }
 }

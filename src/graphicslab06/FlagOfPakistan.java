@@ -29,7 +29,6 @@ public class FlagOfPakistan extends UniqueFlag {
     private static final Point2D.Double starCtr;
 
     static {
-        setFlagRatio(1.5);
         double angle = Math.atan2(1, 1.125);
         
         p1 = new Point2D.Double(15.0 / 16, 0.5);
@@ -57,7 +56,7 @@ public class FlagOfPakistan extends UniqueFlag {
         whiteZone.add(crescent);
         whiteZone.add(star.createTransformedArea(placement));
 
-        flagBase = getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(flagRatio);
     }
 
     public FlagOfPakistan() {

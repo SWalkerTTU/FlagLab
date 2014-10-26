@@ -15,7 +15,6 @@ import java.util.HashMap;
 public abstract class Flag {
 
     private static AffineTransform blowUp = new AffineTransform();
-    private static double flagRatio;
 
     static Area getFlagBase(double flagRatio) {
         return new Area(new Rectangle2D.Double(0, 0, flagRatio, 1));
@@ -24,14 +23,8 @@ public abstract class Flag {
     public static AffineTransform getBlowUp() {
         return blowUp;
     }
+    static final double flagRatio = 1.5;
 
-    public static double getFlagRatio() {
-        return flagRatio;
-    }
-
-    public static void setFlagRatio(double aFlagRatio) {
-        flagRatio = aFlagRatio;
-    }
     private final ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> areas
             = new ArrayList<>();
 
@@ -54,6 +47,10 @@ public abstract class Flag {
         nameImage = GL6Util.nameDraw(name);
     }
 
+    public double getFlagRatio(){
+        return flagRatio;
+    }
+    
     ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> getAreas() {
         return areas;
     }
@@ -69,7 +66,7 @@ public abstract class Flag {
     }
 
     public void drawFlag() {
-        flagRect = GL6Util.makeFlagBox(getFlagRatio());
+        flagRect = GL6Util.makeFlagBox(this.getFlagRatio());
         flagImage = GL6Util.imageBase(flagRect);
         Graphics2D canvas = flagImage.createGraphics();
         canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,

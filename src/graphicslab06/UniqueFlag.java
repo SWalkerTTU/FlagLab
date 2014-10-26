@@ -1,25 +1,30 @@
 package graphicslab06;
 
+import java.awt.Color;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UniqueFlag extends Flag {
-
+    
+    private static final BarFlag blank = new BarFlag("0",
+            new Color[]{Color.BLACK}, false);
+    
     private static final Set<FlagClasses> flagTypes
             = EnumSet.allOf(FlagClasses.class);
 
-    static Flag create(String name){
-        Class fc = flagTypes.stream()
-                .filter(ft -> ft.getName().equals(name))
-                .findFirst().get().getFlagClass();
+    static Flag create(String name) {
         try {
-            return (Flag) fc.newInstance();
+            return (Flag) flagTypes.stream()
+                    .filter((FlagClasses ft) -> name.contains(ft.getName()))
+                    .findFirst().orElse(FlagClasses.blank)
+                    .getFlagClass().newInstance();
+
         } catch (InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(UniqueFlag.class.getName())
                     .log(Level.SEVERE, null, ex);
-            return new BarFlag("",null,false);
+            return blank;
         }
     }
 
@@ -40,7 +45,8 @@ public class UniqueFlag extends Flag {
         SWITZERLAND("Switzerland", FlagOfSuisse.class),
         TEXAS("Texas", FlagOfTexas.class),
         UK("United Kingdom", FlagOfUK.class),
-        USA("United States", FlagOfUSA.class);
+        USA("United States", FlagOfUSA.class),
+        blank("",Object.class);
 
         private final String name;
         private final Class flagClass;

@@ -26,18 +26,18 @@ public class FlagOfUSA extends UniqueFlag {
     private static final double starVSpace = 7.0 / 130.0;
 
     private static final AffineTransform starScale;
+    private static final double flagRatioUS = 1.9;
 
     static {
-        setFlagRatio(1.9);
         starScale = AffineTransform.getScaleInstance(starDiam, starDiam);
 
-        flagBase = getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(flagRatioUS);
 
         IntStream.range(0, 13).filter((int i) -> i % 2 == 1)
                 .forEach((int i) -> {
                     Area stripe = new Area(
                             new Rectangle2D.Double(0, i / 13.0,
-                                    getFlagRatio(), 1 / 13.0));
+                                    flagRatioUS, 1 / 13.0));
                     whiteStripes.add(stripe);
                 });
 
@@ -61,4 +61,9 @@ public class FlagOfUSA extends UniqueFlag {
         getAreas().add(new HashMap.SimpleImmutableEntry<>(canton, blue));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(starField, white));
     }
+
+    @Override
+    public double getFlagRatio() {
+        return flagRatioUS;
+    }    
 }

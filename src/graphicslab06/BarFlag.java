@@ -8,10 +8,6 @@ import java.util.stream.IntStream;
 
 public class BarFlag extends Flag {
 
-    static {
-        setFlagRatio(1.5);
-    }
-
     public BarFlag(String name, Color[] c, boolean isVertical) {
         super(name);
         double fr = getFlagRatio();

@@ -20,8 +20,6 @@ public class FlagOfPRC extends UniqueFlag {
     private static final AffineTransform lilStar;
 
     static {
-        double fr = 1.5;
-        setFlagRatio(fr);
 
         bigStar = AffineTransform.getTranslateInstance(0.25, 0.25);
         bigStar.scale(0.15, 0.15);
@@ -42,7 +40,7 @@ public class FlagOfPRC extends UniqueFlag {
                     return star.createTransformedArea(lilStar);
                 }).forEach(starField::add);
 
-        flagBase = getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(flagRatio);
     }
 
     public FlagOfPRC() {

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -44,22 +43,20 @@ public class FileOps {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        Map<String, List<String>> sections = lines
-                .stream()
-                .map(s -> s.startsWith("[[") ? "" : s + ":" + s)
-                .filter(s -> !s.isEmpty())
-                .collect(Collectors.groupingBy(s -> {
-                    String[] sp = s.split(":");
-                    return sp[0];
-                }));
+        Map<String, List<String>> sections = lines.stream()
+                .map(s -> {
+                    boolean isPrefix = s.startsWith("[[");
+                    if (isPrefix) {
+                        prefix = s;
+                    }
+                    return (isPrefix) ? "" : prefix + ":" + s;
+                }).filter(s -> !s.isEmpty())
+                .collect(Collectors.groupingBy(s -> s.split(":")[0]));
 
-        return Arrays.stream(headers)
-                .map((String s) -> sections
-                        .get(s)
-                        .stream()
-                        .sequential()
-                        .map(FileOps::flagFactory)
-                        .toArray(Flag[]::new))
+        return Arrays.stream(headers).map(s
+                -> sections.get(s).stream().sequential()
+                .map(FileOps::flagFactory)
+                .toArray(Flag[]::new))
                 .toArray(Flag[][]::new);
     }
 
@@ -72,23 +69,21 @@ public class FileOps {
         String name = p[0].replace("\"", "");
 
         if (type.equals(ufHead)) {
-                return UniqueFlag.create(name);
+            return UniqueFlag.create(name);
         }
 
-        boolean vertical = p[p.length - 1].equals("V");
-
-        Color[] colors = parseColors(Arrays.copyOfRange(p, 1, p.length - 1));
-
         if (bfHead.equals(type)) {
+            boolean vertical = p[p.length - 1].equals("V");
+            Color[] colors = parseColors(Arrays.copyOfRange(p, 1, p.length - 1));
             return new BarFlag(name, colors, vertical);
         } else {
+            Color[] colors = parseColors(Arrays.copyOfRange(p, 1, p.length));
             return new NordicFlag(name, colors);
         }
     }
 
     private static Color[] parseColors(String[] tokens) {
-        return Arrays.stream(tokens)
-                .map(Color::decode)
-                .toArray(Color[]::new);
+        return Arrays.stream(tokens).map(Color::decode).toArray(Color[]::new);
     }
+
 }
