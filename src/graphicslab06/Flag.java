@@ -1,80 +1,61 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package graphicslab06;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
-import java.awt.font.TextLayout;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- *
- * @author scott.walker
- */
-public class Flag {
-    private static ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> areas
+public abstract class Flag {
+
+    private static AffineTransform blowUp = new AffineTransform();
+    private static double flagRatio;
+
+    static Area getFlagBase(double flagRatio) {
+        return new Area(new Rectangle2D.Double(0, 0, flagRatio, 1));
+    }
+
+    public static AffineTransform getBlowUp() {
+        return blowUp;
+    }
+
+    public static double getFlagRatio() {
+        return flagRatio;
+    }
+
+    public static void setFlagRatio(double aFlagRatio) {
+        flagRatio = aFlagRatio;
+    }
+    private final ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> areas
             = new ArrayList<>();
-
-    public static BufferedImage nameDraw(String name) {
-        Font nameFont = new Font("Algerian", Font.BOLD, 48);
-        FontRenderContext nameRC
-                = new FontRenderContext(new AffineTransform(), true, false);
-        TextLayout layout = new TextLayout(name, nameFont, nameRC);
-        Rectangle2D textBox = layout.getBounds();
-        textBox.setRect(0, 0, textBox.getWidth() + 50,
-                textBox.getHeight() + 30);
-        BufferedImage nameImage
-                = new BufferedImage((int) Math.ceil(textBox.getWidth()),
-                        (int) Math.ceil(textBox.getHeight()),
-                        BufferedImage.TYPE_INT_RGB);
-        Graphics2D myCanvas = nameImage.createGraphics();
-        myCanvas.setBackground(Color.white);
-        myCanvas.fill(textBox);
-        myCanvas.setColor(Color.black);
-        myCanvas.draw(textBox);
-        layout.draw(myCanvas, 25, (float) textBox.getHeight() - 15);
-        return nameImage;
-    }
-
-    /**
-     * @return the areas
-     */
-    static ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> getAreas() {
-        return areas;
-    }
-
-    /**
-     * @param aAreas the areas to set
-     */
-    static void setAreas(ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> aAreas) {
-        areas = aAreas;
-    }
 
     private final Color[] colors;
     private BufferedImage image;
     private final String name;
-    private BufferedImage nameImage;
+    private final BufferedImage nameImage;
+    protected BufferedImage flagImage;
+    protected Rectangle2D.Double flagRect;
 
     public Flag() {
         colors = null;
         name = null;
-        nameImage = Flag.nameDraw("");
+        nameImage = GL6Util.nameDraw("");
     }
 
-    public Flag(String n, Color[] c) {
+    public Flag(String n) {
         name = n;
-        colors = c;
-        nameImage = Flag.nameDraw(name);
+        colors = null;
+        nameImage = GL6Util.nameDraw(name);
+    }
+
+    ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> getAreas() {
+        return areas;
     }
 
     public void displayFlag(Graphics g, int speed) {
@@ -87,29 +68,19 @@ public class Flag {
         return image;
     }
 
-    public void setImage(BufferedImage img) {
-        image = img;
-    }
-
-    protected void drawFlag() {
-        image = GL6Util.drawBarFlag(new Color[]{Color.white}, true);
-    }
-
-    protected Color[] getColors() {
-        return colors;
-    }
-
-    /**
-     * @return the nameImage
-     */
-    BufferedImage getNameImage() {
-        return nameImage;
-    }
-
-    /**
-     * @param nameImage the nameImage to set
-     */
-    void setNameImage(BufferedImage nameImage) {
-        this.nameImage = nameImage;
+    public void drawFlag() {
+        flagRect = GL6Util.makeFlagBox(getFlagRatio());
+        flagImage = GL6Util.imageBase(flagRect);
+        Graphics2D canvas = flagImage.createGraphics();
+        canvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        blowUp.setToScale(flagRect.height, flagRect.height);
+        areas.stream()
+                .forEachOrdered((AbstractMap.SimpleImmutableEntry<Area, Color> aMap) -> {
+                    canvas.setColor(aMap.getValue());
+                    canvas.fill(aMap.getKey()
+                            .createTransformedArea(getBlowUp()));
+                });
+        image = GL6Util.paintOnBG(flagImage);
     }
 }

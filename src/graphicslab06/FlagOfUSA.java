@@ -8,10 +8,10 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
-public class FlagOfUSA extends UniqueFlagA {
+public class FlagOfUSA extends UniqueFlag {
 
-    private static final Color blue = new Color(3947374);
-    private static final Color red = new Color(11674164);
+    private static final Color blue = new Color(0x3c3b6e);
+    private static final Color red = new Color(0xb22234);
     private static final Color white = Color.white;
 
     private static final Area canton
@@ -31,7 +31,7 @@ public class FlagOfUSA extends UniqueFlagA {
         setFlagRatio(1.9);
         starScale = AffineTransform.getScaleInstance(starDiam, starDiam);
 
-        flagBase = GL6Util.getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(getFlagRatio());
 
         IntStream.range(0, 13).filter((int i) -> i % 2 == 1)
                 .forEach((int i) -> {
@@ -52,14 +52,13 @@ public class FlagOfUSA extends UniqueFlagA {
                     s = xlate.createTransformedShape(s);
                     return new Area(s);
                 }).forEach(starField::add);
-
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase, red));
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(whiteStripes, white));
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(canton, blue));
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(starField, white));
     }
 
     public FlagOfUSA() {
         super("United States");
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase, red));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(whiteStripes, white));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(canton, blue));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(starField, white));
     }
 }

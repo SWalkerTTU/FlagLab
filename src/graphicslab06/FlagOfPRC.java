@@ -7,7 +7,7 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
-public class FlagOfPRC extends UniqueFlagA {
+public class FlagOfPRC extends UniqueFlag {
 
     private static final double[] littleCtrXs = new double[]{10, 12, 12, 10};
     private static final double[] littleCtrYs = new double[]{2, 4, 7, 9};
@@ -26,7 +26,7 @@ public class FlagOfPRC extends UniqueFlagA {
         bigStar = AffineTransform.getTranslateInstance(0.25, 0.25);
         bigStar.scale(0.15, 0.15);
         lilStar = new AffineTransform();
-        
+
         starField = star.createTransformedArea(bigStar);
 
         IntStream.range(0, littleCtrXs.length)
@@ -41,16 +41,15 @@ public class FlagOfPRC extends UniqueFlagA {
                     lilStar.rotate(theta);
                     return star.createTransformedArea(lilStar);
                 }).forEach(starField::add);
-        
-        flagBase = GL6Util.getFlagBase(getFlagRatio());
-        
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase,
-                Color.red));
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(starField,
-                Color.yellow));
+
+        flagBase = getFlagBase(getFlagRatio());
     }
 
     public FlagOfPRC() {
         super("China");
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase,
+                Color.red));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(starField,
+                Color.yellow));
     }
 }

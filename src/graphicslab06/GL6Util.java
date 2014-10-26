@@ -4,21 +4,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.Random;
 import java.util.stream.IntStream;
 import javax.swing.JOptionPane;
 
 public class GL6Util {
-
 
     private static int height;
     private static int width;
@@ -56,7 +53,7 @@ public class GL6Util {
         delay(2000);
     }
 
-    public static void speckleDraw(Graphics g, BufferedImage image, int speed) {
+    static void speckleDraw(Graphics g, BufferedImage image, int speed) {
         int imgWidth = image.getWidth();
         int imgHeight = image.getHeight();
         int boxSize;
@@ -104,20 +101,26 @@ public class GL6Util {
 
     }
 
-    public static void titlePage(Graphics g, String name, int period) {
-        g.setColor(new Color(16766720));
-        g.fillRect(0, 0, 4800, 3600);
-        g.setColor(Color.white);
-        g.fillRect(100, 100, 800, 450);
-        g.setColor(Color.red);
-        Font title = new Font("Algerian", Font.BOLD, 48);
-        g.setFont(title);
-        g.drawString("Flags of the World", 225, 240);
-        g.setColor(Color.blue);
-        g.drawString("by: " + name, 225, 340);
-        g.setColor(Color.green);
-        g.drawString("Period: " + period, 225, 440);
-        GL6Util.delay(3000);
+    static void titlePage(Graphics g, String name, int period) {
+        final Color gold = new Color(0xffd700);
+        final Font title = new Font("Algerian", Font.BOLD, 48);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setBackground(gold);
+        g2.clearRect(0, 0, width, height);
+        Rectangle2D.Double rect
+                = new Rectangle2D.Double(0.1 * width, height / 6.0,
+                        0.8 * width, 2 * height / 3.0);
+
+        g2.setColor(Color.white);
+        g2.fill(rect);
+        g2.setColor(Color.red);
+        g2.setFont(title);
+        g2.drawString("Flags of the World", 225, 240);
+        g2.setColor(Color.blue);
+        g2.drawString("by: " + name, 225, 340);
+        g2.setColor(Color.green);
+        g2.drawString("Period: " + period, 225, 440);
+        delay(3000);
     }
 
     private static void buildStar() {
@@ -138,43 +141,7 @@ public class GL6Util {
                 .forEach(star::add);
     }
 
-    protected static BufferedImage drawBars(Color[] colors, boolean isVertical) {
-        return drawBarsInBox(colors, isVertical,
-                new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
-    }
-
-    protected static BufferedImage drawBarsInBox(Color[] colors,
-            boolean isVertical, Rectangle2D.Double flagBox) {
-        final BufferedImage myImage
-                = new BufferedImage((int) Math.round(flagBox.width),
-                        (int) Math.round(flagBox.height),
-                        BufferedImage.TYPE_INT_ARGB);
-        Graphics2D myCanvas = myImage.createGraphics();
-
-        double rectWidth = (isVertical)
-                ? myImage.getWidth() / (double) colors.length
-                : myImage.getWidth();
-        double rectHeight = (isVertical)
-                ? myImage.getHeight()
-                : myImage.getHeight() / (double) colors.length;
-
-        IntStream.range(0, colors.length)
-                .mapToObj((int i) -> {
-                    Rectangle2D.Double rect = (isVertical)
-                            ? new Rectangle2D.Double(i * rectWidth, 0,
-                                    rectWidth, rectHeight)
-                            : new Rectangle2D.Double(0, i * rectHeight, rectWidth, rectHeight);
-                    return new HashMap.SimpleEntry<Rectangle2D.Double, Color>(rect, colors[i]);
-                })
-                .forEach(sie -> {
-                    myCanvas.setColor(sie.getValue());
-                    myCanvas.fill(sie.getKey());
-                });
-
-        return myImage;
-    }
-
-    protected static int enterIntGUI(String prompt) {
+    static int enterIntGUI(String prompt) {
         String tempString = JOptionPane.showInputDialog(prompt);
         int temp = 1;
         try {
@@ -184,132 +151,9 @@ public class GL6Util {
         return temp;
     }
 
-    static BufferedImage drawBarFlag(Color[] colors, boolean vertical) {
-        Rectangle2D.Double rect = makeFlagBox(1.5);
-        BufferedImage img = drawBarsInBox(colors, vertical, rect);
-        return paintOnBG(img);
-    }
-
-    static BufferedImage flagOfBrazil() {
-        BufferedImage myImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Color green = new Color(43097);
-        Color gold = new Color(16763945);
-        Color blue = new Color(4079765);
-        Color white = Color.white;
-        Point2D.Float topLeft = new Point2D.Float(50, 10);
-        float flagUnit = 45.0F;
-        myCanvas.setColor(Color.black);
-        myCanvas.fillRect(0, 0, getWidth(), getHeight());
-        myCanvas.setColor(green);
-        myCanvas.fill(new Rectangle2D.Float(topLeft.x, topLeft.y, 20 * flagUnit, 14 * flagUnit));
-        Path2D.Float drawPath = new Path2D.Float();
-        drawPath.moveTo(getWidth() / 2.0F, getHeight() / 2.0 - 5.3 * flagUnit);
-        drawPath.lineTo(getWidth() / 2.0F - 8.3 * flagUnit, getHeight() / 2.0);
-        drawPath.lineTo(getWidth() / 2.0F, getHeight() / 2.0 + 5.3 * flagUnit);
-        drawPath.lineTo(getWidth() / 2.0F + 8.3 * flagUnit, getHeight() / 2.0);
-        drawPath.closePath();
-        myCanvas.setColor(gold);
-        myCanvas.fill(drawPath);
-        myCanvas.setColor(blue);
-        myCanvas.fill(new Ellipse2D.Float(getWidth() / 2.0F - 3.5F * flagUnit,
-                getHeight() / 2.0F - 3.5F * flagUnit, 7 * flagUnit, 7 * flagUnit));
-        return myImage;
-    }
-
-    @Deprecated
-    static BufferedImage flagOfCanada() {
-        return new FlagOfCanada().getImage();
-    }
-
-    @Deprecated
-    static BufferedImage flagOfJapan() {
-        return new FlagOfJapan().getImage();
-    }
-
-    static BufferedImage flagOfPRC() {
-        return new FlagOfPRC().getImage();
-    }
-
-    static BufferedImage flagOfPakistan() {
-        return new FlagOfPakistan().getImage();
-    }
-
-    static BufferedImage flagOfROK() {
-        return new FlagOfROK().getImage();
-    }
-
-    static BufferedImage flagOfRSA() {
-        return new FlagOfRSA().getImage();
-    }
-
-    static BufferedImage flagOfScotland() {
-        return new FlagOfScotland().getImage();
-    }
-
-    static BufferedImage flagOfSuisse() {
-        return new FlagOfSuisse().getImage();
-    }
-
-    static BufferedImage flagOfTexas() {
-        return new FlagOfTexas().getImage();
-    }
-
-    static BufferedImage flagOfUK() {
-        return new FlagOfUK().getImage();
-    }
-
-    static BufferedImage flagOfUSA() {
-        return new FlagOfUSA().getImage();
-    }
-
-    static Area getFlagBase(double flagRatio) {
-        return new Area(new Rectangle2D.Double(0, 0, flagRatio, 1));
-    }
-
-    static BufferedImage imageBase(Rectangle2D.Double flag) {
-        return new BufferedImage((int) Math.round(flag.width),
-                (int) Math.round(flag.height), BufferedImage.TYPE_INT_RGB);
-    }
-
-    static Rectangle2D.Double makeFlagBox(double flagRatio) {
-        double screenRatio = getWidth() / (double) getHeight();
-        double flagWidth = getWidth(),
-                flagHeight = getHeight();
-        
-        if (flagRatio > screenRatio) {
-            flagHeight = getWidth() / flagRatio;
-        } else {
-            if (flagRatio < screenRatio) {
-                flagWidth = flagRatio * getHeight();
-            }
-        }
-        return new Rectangle2D.Double(0, 0,
-                flagWidth, flagHeight);
-    }
-
-    static BufferedImage nordicCross(Color[] colors) {
-        Rectangle2D.Double rect = makeFlagBox(1.5);
-        final BufferedImage myImage
-                = drawBarsInBox(new Color[]{colors[0]}, true, rect);
-        Graphics2D myCanvas = myImage.createGraphics();
-        myCanvas.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        AffineTransform ns = AffineTransform
-                .getQuadrantRotateInstance(1, 0.375, 0.5);
-        AffineTransform blowUp = AffineTransform
-                .getScaleInstance(rect.height, rect.height);
-        Area bar = new Area(new Rectangle2D.Double(0, 0.4, 1.5, 0.2));
-        bar.add(bar.createTransformedArea(ns));
-        bar = bar.createTransformedArea(blowUp);
-        myCanvas.setColor(colors[1]);
-        myCanvas.fill(bar);
-        return myImage;
-    }
-
     static BufferedImage paintOnBG(BufferedImage flagImage) {
-        BufferedImage myImage = drawBars(new Color[]{Color.BLACK}, true);
+        BufferedImage myImage = new BufferedImage(width, height,
+                BufferedImage.TYPE_INT_RGB);
         Graphics2D myCanvas = myImage.createGraphics();
         int x = (int) Math.round((getWidth() - flagImage.getWidth()) / 2.0);
         int y = (int) Math.round((getHeight() - flagImage.getHeight()) / 2.0);
@@ -317,12 +161,52 @@ public class GL6Util {
         return myImage;
     }
 
-    static Color[] tpGen(){
+    static Color[] tpGen() {
         float[] r = new float[]{0.6F, 1, 0, 0, 1, 1, 0};
         float[] g = new float[]{0.6F, 1, 1, 1, 0, 0, 0};
         float[] b = new float[]{0.6F, 0, 1, 0, 1, 0, 1};
         return IntStream.range(0, r.length)
                 .mapToObj((int i) -> new Color(r[i], g[i], b[i]))
                 .toArray(Color[]::new);
+    }
+
+    static Rectangle2D.Double makeFlagBox(double flagRatio) {
+        double screenRatio = GL6Util.getWidth() / (double) GL6Util.getHeight();
+        double flagWidth = GL6Util.getWidth();
+        double flagHeight = GL6Util.getHeight();
+        if (flagRatio > screenRatio) {
+            flagHeight = GL6Util.getWidth() / flagRatio;
+        } else {
+            if (flagRatio < screenRatio) {
+                flagWidth = flagRatio * GL6Util.getHeight();
+            }
+        }
+        return new Rectangle2D.Double(0, 0, flagWidth, flagHeight);
+    }
+
+    public static BufferedImage nameDraw(String name) {
+        Font nameFont = new Font("Algerian", Font.BOLD, 48);
+        FontRenderContext nameRC
+                = new FontRenderContext(new AffineTransform(), true, false);
+        TextLayout layout = new TextLayout(name, nameFont, nameRC);
+        Rectangle2D textBox = layout.getBounds();
+        textBox.setRect(0, 0, textBox.getWidth() + 50,
+                textBox.getHeight() + 30);
+        BufferedImage nameImage
+                = new BufferedImage((int) Math.ceil(textBox.getWidth()),
+                        (int) Math.ceil(textBox.getHeight()),
+                        BufferedImage.TYPE_INT_RGB);
+        Graphics2D myCanvas = nameImage.createGraphics();
+        myCanvas.setColor(Color.white);
+        myCanvas.fill(textBox);
+        myCanvas.setColor(Color.black);
+        myCanvas.draw(textBox);
+        layout.draw(myCanvas, 25, (float) textBox.getHeight() - 15);
+        return nameImage;
+    }
+
+    static BufferedImage imageBase(Rectangle2D.Double flagRect) {
+        return new BufferedImage((int) Math.round(flagRect.width),
+                (int) Math.round(flagRect.height), BufferedImage.TYPE_INT_RGB);
     }
 }

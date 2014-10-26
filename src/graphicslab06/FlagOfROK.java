@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.stream.IntStream;
 
-public class FlagOfROK extends UniqueFlagA {
+public class FlagOfROK extends UniqueFlag {
 
     private static final Color blue = new Color(13432);
     private static final Color red = new Color(12979248);
@@ -20,7 +20,7 @@ public class FlagOfROK extends UniqueFlagA {
     private static final Area disc;
     private static final Area tao;
     private static final Area flagBase;
-    
+
     private static final Shape largeCirc;
     private static final Shape smallCirc;
     private static final Shape bottomHalfCirc;
@@ -39,13 +39,13 @@ public class FlagOfROK extends UniqueFlagA {
 
     static {
         setFlagRatio(1.5);
-        setAngle(Math.atan2(1, getFlagRatio()));
-        flagBase = GL6Util.getFlagBase(getFlagRatio());
-                
-        angles = new double[]{getAngle(), Math.PI - getAngle(),
-            Math.PI + getAngle(), -getAngle()};
+        double angle = (Math.atan2(1, getFlagRatio()));
+        flagBase = getFlagBase(getFlagRatio());
 
-        rotation = AffineTransform.getRotateInstance(getAngle());
+        angles = new double[]{angle, Math.PI - angle,
+            Math.PI + angle, -angle};
+
+        rotation = AffineTransform.getRotateInstance(angle);
         centering = AffineTransform.getTranslateInstance(0.75, 0.5);
         tgWide = AffineTransform.getTranslateInstance(11.0 / 24, -0.125);
         yflip = AffineTransform.getScaleInstance(-1, 1);
@@ -73,12 +73,6 @@ public class FlagOfROK extends UniqueFlagA {
                     tg.transform(placement);
                     return tg;
                 }).forEach(bagua::add);
-        
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase,
-                Color.white));
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(disc, blue));
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(tao, red));
-        getAreas().add(new HashMap.SimpleImmutableEntry<>(bagua, Color.black));
     }
 
     private static Area buildBars(boolean[] barPat) {
@@ -101,5 +95,10 @@ public class FlagOfROK extends UniqueFlagA {
 
     public FlagOfROK() {
         super("South Korea");
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase,
+                Color.white));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(disc, blue));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(tao, red));
+        getAreas().add(new HashMap.SimpleImmutableEntry<>(bagua, Color.black));
     }
 }

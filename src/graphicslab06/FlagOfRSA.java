@@ -7,7 +7,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 
-public class FlagOfRSA extends UniqueFlagA {
+public class FlagOfRSA extends UniqueFlag {
 
     private static final Color gold = new Color(16561428);
     private static final Color blue = new Color(793740);
@@ -31,11 +31,11 @@ public class FlagOfRSA extends UniqueFlagA {
 
     static {
         setFlagRatio(1.5);
-        setAngle(Math.atan2(1, getFlagRatio()));
+        double angle = Math.atan2(1, getFlagRatio());
 
         centering = AffineTransform.getTranslateInstance(0.75, 0.5);
-        nw = AffineTransform.getRotateInstance(Math.PI + getAngle());
-        sw = AffineTransform.getRotateInstance(Math.PI - getAngle());
+        nw = AffineTransform.getRotateInstance(Math.PI + angle);
+        sw = AffineTransform.getRotateInstance(Math.PI - angle);
         shrink = AffineTransform.getScaleInstance(0.6, 0.6);
 
         whiteBar = new Area(new Rectangle2D.Double(0, - 1 / 6.0, 2.5, 1 / 3.0));
@@ -60,10 +60,13 @@ public class FlagOfRSA extends UniqueFlagA {
         blackTri = new Area(goldTri);
         blackTri.subtract(whiteFimbre);
 
-        flagBase = GL6Util.getFlagBase(getFlagRatio());
+        flagBase = getFlagBase(getFlagRatio());
         bottomHalf = new Area(new Rectangle2D.Double(0, 0.5,
                 getFlagRatio(), 0.5));
+    }
 
+    public FlagOfRSA() {
+        super("South Africa");
         getAreas().add(new HashMap.SimpleImmutableEntry<>(flagBase, red));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(bottomHalf, blue));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(whiteFimbre,
@@ -72,9 +75,5 @@ public class FlagOfRSA extends UniqueFlagA {
         getAreas().add(new HashMap.SimpleImmutableEntry<>(goldTri, gold));
         getAreas().add(new HashMap.SimpleImmutableEntry<>(blackTri,
                 Color.black));
-    }
-
-    public FlagOfRSA() {
-        super("South Africa");
     }
 }

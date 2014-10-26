@@ -1,6 +1,7 @@
 package graphicslab06;
 
 import java.applet.Applet;
+import java.awt.Color;
 import java.awt.Graphics;
 
 public class FlagTest extends Applet {
@@ -15,14 +16,16 @@ public class FlagTest extends Applet {
     public void paint(Graphics g) {
         GL6Util.setWidth(this.getWidth());
         GL6Util.setHeight(this.getHeight());
-
-        Flag f = new FlagOfCanada();
+        Flag f;
+//        f = new FlagOfBrazil();        
+//        f = new BarFlag("Test Pattern", GL6Util.tpGen(), false);
+        f = new NordicFlag("Finland", new Color[]{Color.white, Color.blue});
         
-        f.drawFlag();
-        g.drawImage(f.getImage(), 0, 0, this);
+//        f.drawFlag();
+//        g.drawImage(f.getImage(), 0, 0, this);
 
-//        f.displayFlag(g, 1);
-//        GL6Util.delay(5000);
+        f.displayFlag(g, 1);
+        GL6Util.delay(5000);
 //        System.exit(0);
     }
 
