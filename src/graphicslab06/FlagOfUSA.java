@@ -21,7 +21,7 @@ public class FlagOfUSA extends UniqueFlag {
     private static final Area flagBase;
     private static final Area whiteStripes = new Area();
 
-    private static final double starDiam = 2.0 / 65.0;
+    private static final double starRad = 2.0 / 65.0;
     private static final double starHSpace = 19.0 / 300.0;
     private static final double starVSpace = 7.0 / 130.0;
 
@@ -29,7 +29,7 @@ public class FlagOfUSA extends UniqueFlag {
     private static final double flagRatioUS = 1.9;
 
     static {
-        starScale = AffineTransform.getScaleInstance(starDiam, starDiam);
+        starScale = AffineTransform.getScaleInstance(starRad, starRad);
 
         flagBase = getFlagBase(flagRatioUS);
 

@@ -127,7 +127,7 @@ public class GL6Util {
         final double ratio = (3 - Math.sqrt(5)) / 2.0;
         final double angle = 2 * Math.PI / 5;
         Path2D.Double tri = new Path2D.Double();
-        tri.moveTo(Math.cos(Math.PI / 2), Math.sin(-Math.PI / 2));
+        tri.moveTo(0, -1);
         tri.lineTo(Math.cos(Math.PI / 10) * ratio,
                 Math.sin(Math.PI / 10) * ratio);
         tri.lineTo(-Math.cos(Math.PI / 10) * ratio,
