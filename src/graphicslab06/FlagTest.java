@@ -16,7 +16,7 @@ public class FlagTest extends Applet {
         GL6Util.setWidth(this.getWidth());
         GL6Util.setHeight(this.getHeight());
         Flag f;
-        f = new FlagOfBrazil();        
+        f = new FlagOfMexico();        
 //        f = new BarFlag("Test Pattern", GL6Util.tpGen(), false);
 //        f = new NordicFlag("Finland", new Color[]{Color.white, Color.blue});
         
