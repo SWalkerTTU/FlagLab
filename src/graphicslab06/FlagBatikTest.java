@@ -16,19 +16,17 @@
  */
 package graphicslab06;
 
-import /**
-         *
-         * @author scott.walker
-         */
-
-
+/**
+ *
+ * @author scott.walker
+ */
 public class FlagBatikTest {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+
     }
 
 }
