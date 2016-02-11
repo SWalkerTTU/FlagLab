@@ -16,9 +16,9 @@ public class BarFlag extends Flag {
         double rectX = (isVertical) ? rectW : 0;
         double rectY = (isVertical) ? 0 : rectH;
         IntStream.range(0, c.length).mapToObj(i -> {
-            Area rect
-                    = new Area(new Rectangle2D.Double(rectX * i, rectY * i,
-                                    rectW, rectH));
+            double x = rectX * i;
+            double y = rectY * i;
+            Area rect = new Area(new Rectangle2D.Double(x, y, fr - x, 1.0 - y));
             return new HashMap.SimpleImmutableEntry<>(rect, c[i]);
         }).forEach(getAreas()::add);
     }
