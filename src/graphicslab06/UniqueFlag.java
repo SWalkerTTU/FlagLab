@@ -32,36 +32,4 @@ public class UniqueFlag extends Flag {
         super(n);
     }
 
-    public enum FlagClasses {
-
-        BRAZIL("Brazil", FlagOfBrazil.class),
-        CANADA("Canada", FlagOfCanada.class),
-        JAPAN("Japan", FlagOfJapan.class),
-        CHINA("China", FlagOfPRC.class),
-        PAKISTAN("Pakistan", FlagOfPakistan.class),
-        SOUTH_KOREA("South Korea", FlagOfROK.class),
-        SOUTH_AFRICA("South Africa", FlagOfRSA.class),
-        SCOTLAND("Scotland", FlagOfScotland.class),
-        SWITZERLAND("Switzerland", FlagOfSuisse.class),
-        TEXAS("Texas", FlagOfTexas.class),
-        UK("United Kingdom", FlagOfUK.class),
-        USA("United States", FlagOfUSA.class),
-        blank("",Object.class);
-
-        private final String name;
-        private final Class flagClass;
-
-        private FlagClasses(String n, Class c) {
-            name = n;
-            flagClass = c;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Class getFlagClass() {
-            return flagClass;
-        }
-    }
 }
