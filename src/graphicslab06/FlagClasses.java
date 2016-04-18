@@ -37,9 +37,9 @@ public enum FlagClasses {
     USA("United States", FlagOfUSA.class),
     blank("", Object.class);
     private final String name;
-    private final Class flagClass;
+    private final Class<?> flagClass;
 
-    private FlagClasses(String n, Class c) {
+    private FlagClasses(String n, Class<?> c) {
         name = n;
         flagClass = c;
     }
@@ -48,7 +48,7 @@ public enum FlagClasses {
         return name;
     }
 
-    public Class getFlagClass() {
+    public Class<?> getFlagClass() {
         return flagClass;
     }
 

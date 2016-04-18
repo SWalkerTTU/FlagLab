@@ -14,10 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 /**
  *
@@ -63,9 +60,9 @@ public class FileOps {
     private static Flag flagFactory(String flagString) {
         int i = flagString.indexOf(':');
         String type = flagString.substring(0, i);
-        flagString = flagString.substring(i + 1);
+        String nfs = flagString.substring(i + 1);
 
-        String[] p = flagString.split(",");
+        String[] p = nfs.split(",");
         String name = p[0].replace("\"", "");
 
         if (type.equals(ufHead)) {

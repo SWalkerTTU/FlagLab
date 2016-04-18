@@ -25,32 +25,61 @@ public abstract class Flag {
     }
     static final double flagRatio = 1.5;
 
-    private final ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> areas
-            = new ArrayList<>();
+    private final ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> areas;
 
     private final Color[] colors;
     private BufferedImage image;
     private final String name;
     private final BufferedImage nameImage;
-    protected BufferedImage flagImage;
-    protected Rectangle2D.Double flagRect;
+    private BufferedImage flagImage;
+    private Rectangle2D.Double flagRect;
 
     public Flag() {
+        areas = new ArrayList<>();
         colors = null;
         name = null;
         nameImage = GL6Util.nameDraw("");
     }
 
     public Flag(String n) {
+        areas = new ArrayList<>();
         name = n;
         colors = null;
         nameImage = GL6Util.nameDraw(name);
     }
 
-    public double getFlagRatio(){
+    /**
+     * @return the flagImage
+     */
+    public BufferedImage getFlagImage() {
+        return flagImage;
+    }
+
+    /**
+     * @param flagImage the flagImage to set
+     */
+    public void setFlagImage(BufferedImage flagImage) {
+        this.flagImage = flagImage;
+    }
+
+    public double getFlagRatio() {
         return flagRatio;
     }
-    
+
+    /**
+     * @return the flagRect
+     */
+    public Rectangle2D.Double getFlagRect() {
+        return flagRect;
+    }
+
+    /**
+     * @param flagRect the flagRect to set
+     */
+    public void setFlagRect(Rectangle2D.Double flagRect) {
+        this.flagRect = flagRect;
+    }
+
     ArrayList<HashMap.SimpleImmutableEntry<Area, Color>> getAreas() {
         return areas;
     }
@@ -76,8 +105,13 @@ public abstract class Flag {
                 .forEachOrdered((AbstractMap.SimpleImmutableEntry<Area, Color> aMap) -> {
                     canvas.setColor(aMap.getValue());
                     canvas.fill(aMap.getKey()
-                            .createTransformedArea(getBlowUp()));
+                            .createTransformedArea(blowUp));
                 });
         image = GL6Util.paintOnBG(flagImage);
+    }
+
+    @Override
+    public String toString() {
+        return "Flag of " + name;
     }
 }

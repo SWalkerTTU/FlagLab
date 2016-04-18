@@ -38,10 +38,8 @@ public class GraphicsLab06A extends Applet {
 
     @Override
     public void paint(Graphics g) {
-        GL6Util.setWidth(width);
-        GL6Util.setHeight(height);
+        GL6Util.setBounds(this.getBounds());
         GL6Util.titlePage(g, "Scott Walker", 0);
-
         Arrays.stream(flags).forEach(
                 fa -> Arrays.stream(fa).forEach(
                         f -> f.displayFlag(g, speed)));

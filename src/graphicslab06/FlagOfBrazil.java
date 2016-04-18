@@ -34,7 +34,7 @@ public class FlagOfBrazil extends UniqueFlag {
 
     private static final double module = 1.0 / 14;
 
-    private static final double[] starSizes = new double[]{
+    static final double[] starSizes = new double[]{
         0, 0.3, 0.25, 0.2, 1.0 / 7, 0.1
     };
     private static final Point2D.Double bandCtr
@@ -44,13 +44,12 @@ public class FlagOfBrazil extends UniqueFlag {
     private static final double radius1 = 8.5 * module;
     private static final double radius2 = 8.0 * module;
     private static final double radius3 = 8.25 * module;
-    
+
     private static final double letterH = 0.3 * module;
 
     private static final double radius4 = (radius1 + radius2 + letterH) / 2;
     private static final double flagRatioBR;
-    
-    
+
     static {
         flagRatioBR = 10.0 / 7;
         flagBase = getFlagBase(flagRatioBR);
@@ -62,29 +61,28 @@ public class FlagOfBrazil extends UniqueFlag {
 
     private static void buildSky() {
         Ellipse2D.Double baseCirc = new Ellipse2D.Double(-1, -1, 2, 2);
-        
+
         AffineTransform globeShape
                 = AffineTransform
-                        .getTranslateInstance(globeCtr.x, globeCtr.y);
+                .getTranslateInstance(globeCtr.x, globeCtr.y);
         globeShape.scale(3.5 * module, 3.5 * module);
-        
+
         globe.add(new Area(baseCirc));
         globe.transform(globeShape);
-        
-        
-        AffineTransform bandShape 
+
+        AffineTransform bandShape
                 = AffineTransform.getTranslateInstance(bandCtr.x, bandCtr.y);
         bandShape.scale(radius1, radius1);
-        
+
         band.add(new Area(baseCirc));
         band.transform(bandShape);
-        
+
         bandShape.setToTranslation(bandCtr.x, bandCtr.y);
         bandShape.scale(radius2, radius2);
-        
+
         band.subtract(new Area(bandShape.createTransformedShape(baseCirc)));
         band.intersect(globe);
-        
+
         final double starUnit = 0.35 * module;
 
         Arrays.stream(BrazilStars.values()).map((BrazilStars s) -> {
@@ -101,16 +99,16 @@ public class FlagOfBrazil extends UniqueFlag {
         double margin = 1.7 * module;
         double width = 20 * module;
         double height = 14 * module;
-        
+
         diamond.add(new Area(new Rectangle2D.Double(0, 0, 1, 1)));
-        
+
         AffineTransform diamShape
                 = AffineTransform.getTranslateInstance(globeCtr.x,
                         margin);
         diamShape.scale((width - 2 * margin) * Math.sqrt(0.5),
                 (height - 2 * margin) * Math.sqrt(0.5));
         diamShape.rotate(Math.PI / 4.0);
-        
+
         diamond.transform(diamShape);
     }
 
@@ -168,7 +166,6 @@ public class FlagOfBrazil extends UniqueFlag {
 
         // radius4 is the radius of the circle where the tops of the letters
         // should go and globeCtr.x is the horizontal centerline.
-        
         double pX = letters[8].getBounds2D().getX();
         double rot = Math.asin((globeCtr.x - pX) / radius4);
         spin.setToRotation(rot, bandCtr.x, bandCtr.y);
@@ -189,7 +186,7 @@ public class FlagOfBrazil extends UniqueFlag {
         return flagRatioBR;
     }
 
-    private static enum BrazilStars {
+    static enum BrazilStars {
 
         ACRE(2.5, -0.5, 3),
         AMAPÁ(-8.25, 4.25, 2),
